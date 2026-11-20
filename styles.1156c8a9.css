@@ -1,0 +1,123 @@
+:root {
+  --bg: #1d1535;
+  --frame: #2a1f4d;
+  --ink: #f6f1ff;
+  --muted: #c9bfe6;
+  --accent: #ffd87a;
+  --accent-ink: #2b1d55;
+  --line: #5a4a8f;
+  color-scheme: dark light;
+}
+@media (prefers-color-scheme: light) {
+  :root { --bg: #ece7f8; --frame: #ffffff; --ink: #20143f; --muted: #51447a; --line: #b9aee0; --accent: #3b2a6e; --accent-ink: #ffffff; }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; font-size: 100%; }
+body {
+  margin: 0; min-height: 100vh; min-height: 100dvh;
+  background: var(--bg); color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 1rem; line-height: 1.5;
+  display: flex; justify-content: center;
+}
+.frame {
+  width: 100%; max-width: 30rem; min-height: 100vh; min-height: 100dvh;
+  display: flex; flex-direction: column;
+  background: var(--frame);
+  padding: max(0.75rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+           max(0.75rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+}
+@media (min-width: 40rem) {
+  body { align-items: center; padding: 1rem; }
+  .frame { min-height: 0; height: min(52rem, 94vh); border-radius: 1.5rem; border: 1px solid var(--line); }
+}
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
+h1 { margin: 0; font-size: 1.5rem; }
+h2 { margin: 0 0 0.5rem; font-size: 1.25rem; }
+.stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 0.5rem; padding: 1rem 0; }
+.pet { width: min(70vw, 16rem); height: auto; }
+.bob { animation: bob 3s ease-in-out infinite; transform-origin: 100px 170px; }
+@keyframes bob { 50% { transform: translateY(-5px); } }
+.engine-note, .sync-line, .small { color: var(--muted); font-size: 0.9rem; margin: 0; }
+.btn {
+  font: inherit; min-height: 2.75rem; padding: 0.5rem 1rem; border-radius: 0.75rem;
+  border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer;
+}
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+.btn.ghost { border-color: transparent; text-decoration: underline; }
+.btn[hidden] { display: none; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.skip { position: absolute; left: -999px; top: 0; background: var(--accent); color: var(--accent-ink); padding: 0.5rem 1rem; z-index: 10; }
+.skip:focus { left: 0.5rem; top: 0.5rem; }
+.card { border: 1px solid var(--line); border-radius: 1rem; padding: 0.75rem 1rem; margin: 0.5rem 0; background: color-mix(in srgb, var(--frame) 85%, var(--accent) 6%); }
+.card p { margin: 0 0 0.5rem; }
+.card .row, .panel .row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.steps { padding-left: 1.25rem; margin: 0.25rem 0 0.75rem; }
+.steps li { margin-bottom: 0.5rem; }
+.steps svg { width: 1.5rem; height: 1.5rem; vertical-align: middle; margin: 0 0.25rem; }
+dialog { max-width: min(28rem, 92vw); width: 100%; border: 1px solid var(--line); border-radius: 1rem; background: var(--frame); color: var(--ink); padding: 0; }
+dialog::backdrop { background: rgba(0, 0, 0, 0.55); }
+.panel { padding: 1rem 1.25rem; }
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1rem; margin: 0 0 0.75rem; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; overflow-wrap: anywhere; }
+.noscript { padding: 1rem; }
+.card.overlay { position: fixed; left: 0.75rem; right: 0.75rem; bottom: max(0.75rem, env(safe-area-inset-bottom)); max-width: 28rem; margin: 0 auto; z-index: 20; background: var(--frame); box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.5); }
+.claim { font-size: 0.95rem; }
+.rotate { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem; text-align: center; background: var(--bg); color: var(--ink); }
+.rotate[hidden] { display: none; }
+.rotate-title { font-size: 1.25rem; font-weight: 600; margin: 0; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* Game layer styles. Appended to the shell stylesheet by the web build. Sizes are in rem so text scaling works. */
+.game { width: 100%; display: flex; flex-direction: column; gap: 0.5rem; }
+.tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.btn.tab { min-height: 2.75rem; padding: 0.25rem 0.75rem; }
+.btn.tab[aria-current="page"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; text-decoration: underline; }
+.stage-wrap { position: sticky; top: 0; z-index: 5; width: 100%; background: var(--frame); padding-bottom: 0.25rem; }
+.stage-wrap[hidden] { display: none; }
+.stage-box { width: 100%; aspect-ratio: 4 / 3; max-height: 40vh; display: flex; justify-content: center; }
+.pet-canvas { width: 100%; height: 100%; max-width: 100%; border-radius: 1rem; border: 1px solid var(--line); background: #cfe9ff; touch-action: none; }
+.restoring { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(20, 10, 40, 0.6); color: #fff; font-weight: 600; border-radius: 1rem; }
+.restoring[hidden] { display: none; }
+.toast { min-height: 1.5rem; margin: 0; color: var(--ink); font-weight: 600; }
+.screen { display: flex; flex-direction: column; gap: 0.5rem; padding-bottom: 1rem; }
+.screen h2 { margin: 0.25rem 0; }
+.screen h3 { margin: 0.5rem 0 0.25rem; font-size: 1.05rem; }
+.field { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0.35rem 0; }
+.field label { min-width: 8rem; }
+.field input[type="text"], .field select { flex: 1; min-width: 10rem; min-height: 2.75rem; font: inherit; padding: 0.25rem 0.5rem; border-radius: 0.5rem; border: 1px solid var(--line); background: var(--frame); color: var(--ink); }
+.field input[type="range"] { flex: 1; min-width: 10rem; min-height: 2.75rem; }
+.field input[type="color"] { min-width: 3rem; min-height: 2.75rem; }
+.hint, .seed { color: var(--muted); font-size: 0.9rem; }
+fieldset { border: 1px solid var(--line); border-radius: 0.75rem; margin: 0.25rem 0; padding: 0.5rem 0.75rem; }
+legend { padding: 0 0.25rem; font-weight: 600; }
+.row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; }
+.btn[aria-pressed="true"]::before { content: "\2713\00a0"; }
+.coat-status, .form-message, .hint-line, .state-line { margin: 0.25rem 0; min-height: 1.4rem; }
+progress { width: 100%; height: 1rem; }
+.needs { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.25rem; }
+.need { display: flex; justify-content: space-between; gap: 0.5rem; padding: 0.35rem 0.6rem; border: 1px solid var(--line); border-radius: 0.6rem; }
+.need-label { font-weight: 600; }
+.need[data-band="low"] .need-word { text-decoration: underline dotted; }
+.actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: 0.5rem; }
+.actions[role="group"] .btn[hidden] { display: none; }
+.action { position: relative; }
+.action .count { margin-left: 0.5rem; padding: 0 0.4rem; border: 1px solid var(--line); border-radius: 0.5rem; }
+.stamps, .treat-list, .profile-list { list-style: none; padding: 0; margin: 0 0 0.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 0.4rem; }
+.stamp { border: 1px solid var(--line); border-radius: 0.6rem; padding: 0.4rem 0.6rem; }
+.stamp[data-have="false"] { color: var(--muted); border-style: dashed; }
+.treat, .profile { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; border: 1px solid var(--line); border-radius: 0.6rem; padding: 0.4rem 0.6rem; }
+.treat-name, .profile-name { font-weight: 600; flex: 1; }
+.finds ul { margin: 0; padding-left: 1.25rem; }
+.game-error { padding: 1rem; }
+.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after { animation: none !important; transition: none !important; }
+.settings .facts { grid-template-columns: 1fr; }
+.settings .facts dd { margin-bottom: 0.4rem; }
+.stage.game-main { justify-content: flex-start; align-items: stretch; text-align: left; padding: 0.5rem 0; }
+/* On a phone the page itself scrolls (so the sticky pet stays in view); in the framed desktop layout the frame is a fixed height, so main scrolls. */
+@media (min-width: 40rem) { .stage.game-main { overflow-y: auto; min-height: 0; } }
+#game-root { width: 100%; }

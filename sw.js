@@ -1,0 +1,93 @@
+// Pet Preview service worker. 9f6ca12113a6 and the precache list are filled in by scripts/build.mjs.
+const VERSION = "9f6ca12113a6";
+// Cache names carry the scope path, so two copies on one origin (for example two sub-paths on a
+// shared Pages host) never delete each other's caches.
+const CACHE_PREFIX = "petpreview-" + new URL(self.registration.scope).pathname;
+const CACHE = CACHE_PREFIX + VERSION;
+const PRECACHE = [
+  "./",
+  "app.92c6fb3b.js",
+  "coat-worker.7b5bb7a8.js",
+  "icons/apple-touch-icon.png",
+  "icons/icon-192.png",
+  "icons/icon-512.png",
+  "icons/icon-maskable-512.png",
+  "index.html",
+  "manifest.webmanifest",
+  "styles.1156c8a9.css"
+];
+const HASHED_ASSET = /\.[0-9a-f]{8}\.(?:js|css)$/;
+const API_PATH = /\/api\//;
+
+function abs(path) {
+  return new URL(path, self.registration.scope).href;
+}
+
+self.addEventListener("install", (event) => {
+  // No skipWaiting here: the new version waits until the player opens the app again
+  // or taps "Refresh now" (which sends SKIP_WAITING).
+  event.waitUntil(
+    caches.open(CACHE).then((cache) => cache.addAll(PRECACHE.map((p) => new Request(abs(p), { cache: "reload" })))),
+  );
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.filter((k) => k.startsWith(CACHE_PREFIX) && !k.slice(CACHE_PREFIX.length).includes("/") && k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim()),
+  );
+});
+
+self.addEventListener("message", (event) => {
+  const data = event.data || {};
+  if (data.type === "SKIP_WAITING") self.skipWaiting();
+  if (data.type === "GET_VERSION" && event.source) event.source.postMessage({ type: "VERSION", version: VERSION });
+});
+
+self.addEventListener("fetch", (event) => {
+  const req = event.request;
+  if (req.method !== "GET") return;
+  const url = new URL(req.url);
+  if (url.origin !== new URL(self.registration.scope).origin) return;
+
+  // API: network only, never cached. Offline gives a small JSON error the app can handle.
+  if (API_PATH.test(url.pathname)) {
+    event.respondWith(
+      fetch(req).catch(
+        () => new Response(JSON.stringify({ error: "offline" }), { status: 503, headers: { "Content-Type": "application/json" } }),
+      ),
+    );
+    return;
+  }
+
+  if (req.mode === "navigate") {
+    event.respondWith(
+      caches.open(CACHE).then(async (cache) => {
+        const hit = (await cache.match(req, { ignoreSearch: true })) || (await cache.match(abs("./")));
+        if (hit) return hit;
+        try {
+          return await fetch(req);
+        } catch {
+          return new Response("Pet Preview is offline and has no saved copy yet. Reconnect once and reopen.", {
+            status: 503,
+            headers: { "Content-Type": "text/plain; charset=utf-8" },
+          });
+        }
+      }),
+    );
+    return;
+  }
+
+  // Hashed assets and the rest of the shell: cache first (hashed files never change under one name).
+  event.respondWith(
+    caches.open(CACHE).then(async (cache) => {
+      const hit = await cache.match(req);
+      if (hit) return hit;
+      const res = await fetch(req);
+      if (res.ok && HASHED_ASSET.test(url.pathname)) cache.put(req, res.clone());
+      return res;
+    }),
+  );
+});
