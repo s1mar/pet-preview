@@ -1,0 +1,79 @@
+{
+  "note": "generated at build time from the esbuild metafiles; read by the packet scan only, never by the page",
+  "packages": [
+    {
+      "name": "@babylonjs/core",
+      "version": "9.34.0",
+      "license": "Apache-2.0",
+      "bundles": [
+        "bench-engine-babylon"
+      ]
+    },
+    {
+      "name": "playcanvas",
+      "version": "2.23.3",
+      "license": "MIT",
+      "bundles": [
+        "bench-engine-playcanvas"
+      ]
+    },
+    {
+      "name": "three",
+      "version": "0.187.0",
+      "license": "MIT",
+      "bundles": [
+        "bench-engine-three"
+      ]
+    }
+  ],
+  "bundles": [
+    {
+      "bundle": "bench-engine-babylon",
+      "inputs": 452,
+      "thirdPartyInputs": 448,
+      "packages": 1
+    },
+    {
+      "bundle": "bench-engine-playcanvas",
+      "inputs": 1252,
+      "thirdPartyInputs": 1248,
+      "packages": 1
+    },
+    {
+      "bundle": "bench-engine-three",
+      "inputs": 6,
+      "thirdPartyInputs": 2,
+      "packages": 1
+    },
+    {
+      "bundle": "bench-page",
+      "inputs": 16,
+      "thirdPartyInputs": 0,
+      "packages": 0
+    },
+    {
+      "bundle": "bench-worker",
+      "inputs": 14,
+      "thirdPartyInputs": 0,
+      "packages": 0
+    },
+    {
+      "bundle": "game-coat-worker",
+      "inputs": 12,
+      "thirdPartyInputs": 0,
+      "packages": 0
+    },
+    {
+      "bundle": "shell-and-game-app",
+      "inputs": 49,
+      "thirdPartyInputs": 0,
+      "packages": 0
+    },
+    {
+      "bundle": "sw",
+      "inputs": 1,
+      "thirdPartyInputs": 0,
+      "packages": 0
+    }
+  ]
+}

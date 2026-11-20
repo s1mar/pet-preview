@@ -194,11 +194,12 @@
     }
     /** Uniform-ish integer in [0, n) for 1 <= n <= 2^31 (modulo bias accepted, spec'd). */
     below(n) {
-      if (n < 1) throw new SpecError("rng", "below needs n >= 1");
+      if (!Number.isInteger(n) || n < 1 || n > 2147483648) throw new SpecError("rng", "below needs an integer 1 <= n <= 2^31");
       return (this.next() >>> 0) % n;
     }
     /** Integer in [lo, hi] inclusive. */
     range(lo, hi) {
+      if (!Number.isInteger(lo) || !Number.isInteger(hi)) throw new SpecError("rng", "range needs integers");
       if (hi < lo) throw new SpecError("rng", "range hi < lo");
       return lo + this.below(hi - lo + 1);
     }

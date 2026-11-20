@@ -7,7 +7,7 @@ var __export = (target, all) => {
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // <define:__BENCH_FILES__>
-var define_BENCH_FILES_default = { worker: "s2.worker.8204f69b.js", fixture: "fixture.06bfa27e.js", engines: { babylon: "engine-babylon.bdbe7c59.js", three: "engine-three.ef004fee.js", playcanvas: "engine-playcanvas.81b69d31.js" } };
+var define_BENCH_FILES_default = { worker: "s2.worker.854f3f95.js", fixture: "fixture.06bfa27e.js", engines: { babylon: "engine-babylon.bdbe7c59.js", three: "engine-three.ef004fee.js", playcanvas: "engine-playcanvas.81b69d31.js" } };
 
 // <define:__BENCH_VERSIONS__>
 var define_BENCH_VERSIONS_default = { babylon: "9.34.0", three: "0.187.0", playcanvas: "2.23.3" };
@@ -199,11 +199,12 @@ var Rng = class {
   }
   /** Uniform-ish integer in [0, n) for 1 <= n <= 2^31 (modulo bias accepted, spec'd). */
   below(n) {
-    if (n < 1) throw new SpecError("rng", "below needs n >= 1");
+    if (!Number.isInteger(n) || n < 1 || n > 2147483648) throw new SpecError("rng", "below needs an integer 1 <= n <= 2^31");
     return (this.next() >>> 0) % n;
   }
   /** Integer in [lo, hi] inclusive. */
   range(lo, hi) {
+    if (!Number.isInteger(lo) || !Number.isInteger(hi)) throw new SpecError("rng", "range needs integers");
     if (hi < lo) throw new SpecError("rng", "range hi < lo");
     return lo + this.below(hi - lo + 1);
   }
