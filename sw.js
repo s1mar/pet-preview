@@ -1,13 +1,13 @@
-// Pet Preview service worker. ab47506afc3f and the precache list are filled in by scripts/build.mjs.
-const VERSION = "ab47506afc3f";
+// Pet Preview service worker. 0692221212e0 and the precache list are filled in by scripts/build.mjs.
+const VERSION = "0692221212e0";
 // Cache names carry the scope path, so two copies on one origin (for example two sub-paths on a
 // shared Pages host) never delete each other's caches.
 const CACHE_PREFIX = "petpreview-" + new URL(self.registration.scope).pathname;
 const CACHE = CACHE_PREFIX + VERSION;
 const PRECACHE = [
   "./",
-  "app.92c6fb3b.js",
-  "coat-worker.7b5bb7a8.js",
+  "app.209f6402.js",
+  "coat-worker.7dc2183f.js",
   "icons/apple-touch-icon.png",
   "icons/icon-192.png",
   "icons/icon-512.png",

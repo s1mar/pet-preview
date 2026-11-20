@@ -349,25 +349,54 @@
         }
       }
     }
+    const feed = fam.f;
+    const half = ONE >> 1;
     for (let it = 0; it < iters; it++) {
       for (let y = 0; y < n; y++) {
         const r0 = (y - 1 & mask) * n;
         const r1 = y * n;
         const r2 = (y + 1 & mask) * n;
+        let ual = u[r0 + mask];
+        let uac = u[r0];
+        let ubl = u[r1 + mask];
+        let ubc = u[r1];
+        let udl = u[r2 + mask];
+        let udc = u[r2];
+        let val = v[r0 + mask];
+        let vac = v[r0];
+        let vbl = v[r1 + mask];
+        let vbc = v[r1];
+        let vdl = v[r2 + mask];
+        let vdc = v[r2];
         for (let x = 0; x < n; x++) {
-          const xl = x - 1 & mask;
           const xr = x + 1 & mask;
+          const uar = u[r0 + xr];
+          const ubr = u[r1 + xr];
+          const udr = u[r2 + xr];
+          const var_ = v[r0 + xr];
+          const vbr = v[r1 + xr];
+          const vdr = v[r2 + xr];
           const i = r1 + x;
-          const uc = u[i];
-          const vc = v[i];
-          const lu = 51 * (u[r0 + x] + u[r2 + x] + u[r1 + xl] + u[r1 + xr]) + 13 * (u[r0 + xl] + u[r0 + xr] + u[r2 + xl] + u[r2 + xr]) - 256 * uc;
-          const lv = 51 * (v[r0 + x] + v[r2 + x] + v[r1 + xl] + v[r1 + xr]) + 13 * (v[r0 + xl] + v[r0 + xr] + v[r2 + xl] + v[r2 + xr]) - 256 * vc;
-          const vv = vc * vc + (ONE >> 1) >> Q;
-          const uvv = vv * uc + (ONE >> 1) >> Q;
-          const nu = uc + (du * lu >> 16) - uvv + (fam.f * (ONE - uc) + (ONE >> 1) >> Q);
-          const nv = vc + (dv * lv >> 16) + uvv - (fk * vc + (ONE >> 1) >> Q);
+          const lu = 51 * (uac + udc + ubl + ubr) + 13 * (ual + uar + udl + udr) - 256 * ubc;
+          const lv = 51 * (vac + vdc + vbl + vbr) + 13 * (val + var_ + vdl + vdr) - 256 * vbc;
+          const vv = vbc * vbc + half >> Q;
+          const uvv = vv * ubc + half >> Q;
+          const nu = ubc + (du * lu >> 16) - uvv + (feed * (ONE - ubc) + half >> Q);
+          const nv = vbc + (dv * lv >> 16) + uvv - (fk * vbc + half >> Q);
           u2[i] = nu < 0 ? 0 : nu > ONE ? ONE : nu;
           v2[i] = nv < 0 ? 0 : nv > ONE ? ONE : nv;
+          ual = uac;
+          uac = uar;
+          ubl = ubc;
+          ubc = ubr;
+          udl = udc;
+          udc = udr;
+          val = vac;
+          vac = var_;
+          vbl = vbc;
+          vbc = vbr;
+          vdl = vdc;
+          vdc = vdr;
         }
       }
       let t = u;

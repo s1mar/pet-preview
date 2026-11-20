@@ -7,7 +7,7 @@ var __export = (target, all) => {
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // <define:__BENCH_FILES__>
-var define_BENCH_FILES_default = { worker: "s2.worker.cf38cdee.js", fixture: "fixture.06bfa27e.js", engines: { babylon: "engine-babylon.bdbe7c59.js", three: "engine-three.ef004fee.js", playcanvas: "engine-playcanvas.81b69d31.js" } };
+var define_BENCH_FILES_default = { worker: "s2.worker.62bc2860.js", fixture: "fixture.06bfa27e.js", engines: { babylon: "engine-babylon.bdbe7c59.js", three: "engine-three.ef004fee.js", playcanvas: "engine-playcanvas.81b69d31.js" } };
 
 // <define:__BENCH_VERSIONS__>
 var define_BENCH_VERSIONS_default = { babylon: "9.34.0", three: "0.187.0", playcanvas: "2.23.3" };
@@ -354,25 +354,54 @@ function solveCoat(family, scale, seed, size = COAT_SIZE, iters = COAT_ITERS) {
       }
     }
   }
+  const feed = fam.f;
+  const half = ONE >> 1;
   for (let it = 0; it < iters; it++) {
     for (let y = 0; y < n; y++) {
       const r0 = (y - 1 & mask) * n;
       const r1 = y * n;
       const r2 = (y + 1 & mask) * n;
+      let ual = u[r0 + mask];
+      let uac = u[r0];
+      let ubl = u[r1 + mask];
+      let ubc = u[r1];
+      let udl = u[r2 + mask];
+      let udc = u[r2];
+      let val = v[r0 + mask];
+      let vac = v[r0];
+      let vbl = v[r1 + mask];
+      let vbc = v[r1];
+      let vdl = v[r2 + mask];
+      let vdc = v[r2];
       for (let x = 0; x < n; x++) {
-        const xl = x - 1 & mask;
         const xr = x + 1 & mask;
+        const uar = u[r0 + xr];
+        const ubr = u[r1 + xr];
+        const udr = u[r2 + xr];
+        const var_ = v[r0 + xr];
+        const vbr = v[r1 + xr];
+        const vdr = v[r2 + xr];
         const i = r1 + x;
-        const uc = u[i];
-        const vc = v[i];
-        const lu = 51 * (u[r0 + x] + u[r2 + x] + u[r1 + xl] + u[r1 + xr]) + 13 * (u[r0 + xl] + u[r0 + xr] + u[r2 + xl] + u[r2 + xr]) - 256 * uc;
-        const lv = 51 * (v[r0 + x] + v[r2 + x] + v[r1 + xl] + v[r1 + xr]) + 13 * (v[r0 + xl] + v[r0 + xr] + v[r2 + xl] + v[r2 + xr]) - 256 * vc;
-        const vv = vc * vc + (ONE >> 1) >> Q;
-        const uvv = vv * uc + (ONE >> 1) >> Q;
-        const nu = uc + (du * lu >> 16) - uvv + (fam.f * (ONE - uc) + (ONE >> 1) >> Q);
-        const nv = vc + (dv * lv >> 16) + uvv - (fk * vc + (ONE >> 1) >> Q);
+        const lu = 51 * (uac + udc + ubl + ubr) + 13 * (ual + uar + udl + udr) - 256 * ubc;
+        const lv = 51 * (vac + vdc + vbl + vbr) + 13 * (val + var_ + vdl + vdr) - 256 * vbc;
+        const vv = vbc * vbc + half >> Q;
+        const uvv = vv * ubc + half >> Q;
+        const nu = ubc + (du * lu >> 16) - uvv + (feed * (ONE - ubc) + half >> Q);
+        const nv = vbc + (dv * lv >> 16) + uvv - (fk * vbc + half >> Q);
         u2[i] = nu < 0 ? 0 : nu > ONE ? ONE : nu;
         v2[i] = nv < 0 ? 0 : nv > ONE ? ONE : nv;
+        ual = uac;
+        uac = uar;
+        ubl = ubc;
+        ubc = ubr;
+        udl = udc;
+        udc = udr;
+        val = vac;
+        vac = var_;
+        vbl = vbc;
+        vbc = vbr;
+        vdl = vdc;
+        vdc = vdr;
       }
     }
     let t = u;
@@ -1391,6 +1420,7 @@ async function runS2() {
   out.push("how the game runs these: the coat solve runs in a Web Worker (game/src/workers/coat.worker.js); the game has no replay worker, so journal replay runs on the main thread. Both are measured both ways here.");
   commit();
   const total = coatCaseCount() * CFG.coatPerFamily;
+  let replayEnd = out.length;
   const wk = makeWorker();
   try {
     const t0 = performance.now();
@@ -1400,6 +1430,7 @@ async function runS2() {
     const rp = await wk.call({ cmd: "replay", runs: CFG.replayRuns });
     res.worker.replay = rp.result;
     out.push(...replayLines("in a Web Worker", rp.result, rp.timer));
+    replayEnd = out.length;
     commit();
     const list = [];
     for (let k = 0; k < CFG.coatPerFamily; k++) {
@@ -1421,7 +1452,7 @@ async function runS2() {
   res.main.timer = timer;
   const mr = runReplay(CFG.replayRuns);
   res.main.replay = mr;
-  out.push(...replayLines("on the main thread", mr, timer));
+  out.splice(replayEnd, 0, ...replayLines("on the main thread", mr, timer));
   commit();
   const mlist = [];
   for (let k = 0; k < CFG.coatPerFamily; k++) {

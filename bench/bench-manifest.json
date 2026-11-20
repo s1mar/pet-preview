@@ -1,7 +1,7 @@
 {
   "note": "list of the bench files; read by the packet scan only, never by the page",
-  "main": "bench.d94e240c.js",
-  "worker": "s2.worker.cf38cdee.js",
+  "main": "bench.84179f76.js",
+  "worker": "s2.worker.62bc2860.js",
   "fixture": "fixture.06bfa27e.js",
   "engines": {
     "babylon": "engine-babylon.bdbe7c59.js",
@@ -14,8 +14,8 @@
     "playcanvas": "2.23.3"
   },
   "firstParty": [
-    "bench.d94e240c.js",
-    "s2.worker.cf38cdee.js",
+    "bench.84179f76.js",
+    "s2.worker.62bc2860.js",
     "fixture.06bfa27e.js",
     "index.html"
   ],
@@ -25,12 +25,12 @@
     "engine-playcanvas.81b69d31.js"
   ],
   "files": [
-    "bench.d94e240c.js",
+    "bench.84179f76.js",
     "engine-babylon.bdbe7c59.js",
     "engine-playcanvas.81b69d31.js",
     "engine-three.ef004fee.js",
     "fixture.06bfa27e.js",
     "index.html",
-    "s2.worker.cf38cdee.js"
+    "s2.worker.62bc2860.js"
   ]
 }
