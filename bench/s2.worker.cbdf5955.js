@@ -33,6 +33,8 @@
     INT_MAX: () => INT_MAX,
     INT_MIN: () => INT_MIN,
     Journal: () => Journal,
+    LIFT_BOND: () => LIFT_BOND,
+    LIFT_K_SHIFT: () => LIFT_K_SHIFT,
     MODE_ASLEEP: () => MODE_ASLEEP,
     MODE_NORMAL: () => MODE_NORMAL,
     MODE_WALKING: () => MODE_WALKING,
@@ -577,9 +579,12 @@
     treat_add: 10,
     setting: 11,
     stamp: 12,
-    open: 13
+    open: 13,
+    lift: 14
   };
-  var EV_MAX = 13;
+  var EV_MAX = 14;
+  var LIFT_K_SHIFT = 26;
+  var LIFT_BOND = 4;
   var FULLNESS = 0;
   var ENERGY = 1;
   var SPIRIT = 2;
@@ -692,6 +697,17 @@
     if (e.dev < 0 || e.seq < 1 || e.hw < 1 || e.hc < 0 || e.t < 0) throw new SpecError("event", "event ids or clock out of range");
     if (e.t > 1073741823) throw new SpecError("event", "t beyond the supported range");
     if (e.type === EV.stamp && (e.a < 0 || e.a > 1073741823)) throw new SpecError("event", "stamp time out of range");
+    if (e.type === EV.lift) {
+      if (e.dev !== 0 || e.b !== 0) throw new SpecError("event", "lift needs dev 0 and b 0");
+      if (e.a < 0) throw new SpecError("event", "lift field out of range");
+      const k = e.a >>> LIFT_K_SHIFT;
+      const value = e.a & (1 << LIFT_K_SHIFT) - 1;
+      if (k > LIFT_BOND) throw new SpecError("event", "lift kind out of range");
+      const r = rulesFor(SIM_VERSION);
+      const lo = k < LIFT_BOND ? r.floors[k] * SC : 0;
+      const hi = k < LIFT_BOND ? r.max * SC : r.bondMax;
+      if (value < lo || value > hi) throw new SpecError("event", "lift value out of range");
+    }
   }
   function isCare(type) {
     return type === EV.feed || type === EV.pet || type === EV.groom || type === EV.walk_start || type === EV.walk_end || type === EV.find || type === EV.treat_use;
@@ -815,6 +831,7 @@
   function applyEvent(s, e) {
     validateEvent(e);
     const rules = rulesFor(s.version);
+    if (e.type === EV.lift) return applyLift(s, e);
     if (seenGet(s, e.dev) >= e.seq) return SKIPPED;
     if (s.created === 0 && e.type !== EV.born) return SKIPPED;
     if (s.created === 1 && e.type === EV.born) return SKIPPED;
@@ -850,6 +867,17 @@
     s.count = add(s.count, 1);
     s.chain = chainStep(s.chain, e);
     return res;
+  }
+  function applyLift(s, e) {
+    if (s.created === 0) return SKIPPED;
+    const k = e.a >>> LIFT_K_SHIFT;
+    const value = e.a & (1 << LIFT_K_SHIFT) - 1;
+    if (k < LIFT_BOND) {
+      if (s.needs[k] < value) s.needs[k] = value;
+    } else if (s.bond < value) {
+      s.bond = value;
+    }
+    return { applied: true, reunion: false, refund: false };
   }
   function chainStep(prev, e) {
     return fnv32(eventBytes(e), fnvInt(FNV_OFFSET, prev));
@@ -1204,6 +1232,7 @@
   }
 
   // core/src/merge.ts
+  var HC_MAX = 32767;
   function compareEvents(x, y) {
     if (x.hw !== y.hw) return x.hw < y.hw ? -1 : 1;
     if (x.hc !== y.hc) return x.hc < y.hc ? -1 : 1;
@@ -1250,8 +1279,11 @@
       if (r.applied) applied.push(e);
       if (r.refund) refunds++;
     }
+    const preNeeds = merged.needs.slice();
+    const preBond = merged.bond;
     const byDev = /* @__PURE__ */ new Map();
     for (const e of applied) {
+      if (e.dev === 0) continue;
       const list = byDev.get(e.dev);
       if (list) list.push(e);
       else byDev.set(e.dev, [e]);
@@ -1272,6 +1304,40 @@
         finds: own.filter((e) => e.type === EV.find).length
       });
     }
+    const lifts = [];
+    let liftHw = 1;
+    let liftHc = 0;
+    for (const e of kept) {
+      if (e.hw > liftHw) {
+        liftHw = e.hw;
+        liftHc = 0;
+      }
+    }
+    for (const e of kept) if (e.hw === liftHw && e.hc > liftHc) liftHc = e.hc;
+    if (kept.length > 0) {
+      liftHc += 1;
+      if (liftHc > HC_MAX) {
+        liftHw += 1;
+        liftHc = 0;
+      }
+    }
+    const firstSeq = opts.liftSeq === void 0 ? 1 : opts.liftSeq;
+    const raised = [];
+    for (let i = 0; i < 4; i++) if (merged.needs[i] > preNeeds[i]) raised.push([i, merged.needs[i]]);
+    if (merged.bond > preBond) raised.push([LIFT_BOND, merged.bond]);
+    for (const [k, value] of raised) {
+      lifts.push({
+        type: EV.lift,
+        t: merged.lastRaw,
+        tz: merged.eo,
+        dev: 0,
+        seq: firstSeq + lifts.length,
+        hw: liftHw,
+        hc: liftHc,
+        a: k << LIFT_K_SHIFT | value,
+        b: 0
+      });
+    }
     return {
       state: merged,
       hash: stateHash(merged),
@@ -1281,6 +1347,7 @@
       droppedDuplicate,
       droppedWindow,
       refunds,
+      lifts,
       summary
     };
   }

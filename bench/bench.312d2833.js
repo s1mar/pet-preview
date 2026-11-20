@@ -7,7 +7,7 @@ var __export = (target, all) => {
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // <define:__BENCH_FILES__>
-var define_BENCH_FILES_default = { worker: "s2.worker.854f3f95.js", fixture: "fixture.06bfa27e.js", engines: { babylon: "engine-babylon.bdbe7c59.js", three: "engine-three.ef004fee.js", playcanvas: "engine-playcanvas.81b69d31.js" } };
+var define_BENCH_FILES_default = { worker: "s2.worker.cbdf5955.js", fixture: "fixture.06bfa27e.js", engines: { babylon: "engine-babylon.bdbe7c59.js", three: "engine-three.ef004fee.js", playcanvas: "engine-playcanvas.81b69d31.js" } };
 
 // <define:__BENCH_VERSIONS__>
 var define_BENCH_VERSIONS_default = { babylon: "9.34.0", three: "0.187.0", playcanvas: "2.23.3" };
@@ -38,6 +38,8 @@ __export(src_exports, {
   INT_MAX: () => INT_MAX,
   INT_MIN: () => INT_MIN,
   Journal: () => Journal,
+  LIFT_BOND: () => LIFT_BOND,
+  LIFT_K_SHIFT: () => LIFT_K_SHIFT,
   MODE_ASLEEP: () => MODE_ASLEEP,
   MODE_NORMAL: () => MODE_NORMAL,
   MODE_WALKING: () => MODE_WALKING,
@@ -582,9 +584,12 @@ var EV = {
   treat_add: 10,
   setting: 11,
   stamp: 12,
-  open: 13
+  open: 13,
+  lift: 14
 };
-var EV_MAX = 13;
+var EV_MAX = 14;
+var LIFT_K_SHIFT = 26;
+var LIFT_BOND = 4;
 var FULLNESS = 0;
 var ENERGY = 1;
 var SPIRIT = 2;
@@ -697,6 +702,17 @@ function validateEvent(e) {
   if (e.dev < 0 || e.seq < 1 || e.hw < 1 || e.hc < 0 || e.t < 0) throw new SpecError("event", "event ids or clock out of range");
   if (e.t > 1073741823) throw new SpecError("event", "t beyond the supported range");
   if (e.type === EV.stamp && (e.a < 0 || e.a > 1073741823)) throw new SpecError("event", "stamp time out of range");
+  if (e.type === EV.lift) {
+    if (e.dev !== 0 || e.b !== 0) throw new SpecError("event", "lift needs dev 0 and b 0");
+    if (e.a < 0) throw new SpecError("event", "lift field out of range");
+    const k = e.a >>> LIFT_K_SHIFT;
+    const value = e.a & (1 << LIFT_K_SHIFT) - 1;
+    if (k > LIFT_BOND) throw new SpecError("event", "lift kind out of range");
+    const r = rulesFor(SIM_VERSION);
+    const lo = k < LIFT_BOND ? r.floors[k] * SC : 0;
+    const hi = k < LIFT_BOND ? r.max * SC : r.bondMax;
+    if (value < lo || value > hi) throw new SpecError("event", "lift value out of range");
+  }
 }
 function isCare(type) {
   return type === EV.feed || type === EV.pet || type === EV.groom || type === EV.walk_start || type === EV.walk_end || type === EV.find || type === EV.treat_use;
@@ -820,6 +836,7 @@ function eventBytes(e) {
 function applyEvent(s, e) {
   validateEvent(e);
   const rules = rulesFor(s.version);
+  if (e.type === EV.lift) return applyLift(s, e);
   if (seenGet(s, e.dev) >= e.seq) return SKIPPED;
   if (s.created === 0 && e.type !== EV.born) return SKIPPED;
   if (s.created === 1 && e.type === EV.born) return SKIPPED;
@@ -855,6 +872,17 @@ function applyEvent(s, e) {
   s.count = add(s.count, 1);
   s.chain = chainStep(s.chain, e);
   return res;
+}
+function applyLift(s, e) {
+  if (s.created === 0) return SKIPPED;
+  const k = e.a >>> LIFT_K_SHIFT;
+  const value = e.a & (1 << LIFT_K_SHIFT) - 1;
+  if (k < LIFT_BOND) {
+    if (s.needs[k] < value) s.needs[k] = value;
+  } else if (s.bond < value) {
+    s.bond = value;
+  }
+  return { applied: true, reunion: false, refund: false };
 }
 function chainStep(prev, e) {
   return fnv32(eventBytes(e), fnvInt(FNV_OFFSET, prev));
@@ -1209,6 +1237,7 @@ function loadJournal(d) {
 }
 
 // core/src/merge.ts
+var HC_MAX = 32767;
 function compareEvents(x, y) {
   if (x.hw !== y.hw) return x.hw < y.hw ? -1 : 1;
   if (x.hc !== y.hc) return x.hc < y.hc ? -1 : 1;
@@ -1255,8 +1284,11 @@ function mergeDevices(base, streams, opts = {}) {
     if (r.applied) applied.push(e);
     if (r.refund) refunds++;
   }
+  const preNeeds = merged.needs.slice();
+  const preBond = merged.bond;
   const byDev = /* @__PURE__ */ new Map();
   for (const e of applied) {
+    if (e.dev === 0) continue;
     const list = byDev.get(e.dev);
     if (list) list.push(e);
     else byDev.set(e.dev, [e]);
@@ -1277,6 +1309,40 @@ function mergeDevices(base, streams, opts = {}) {
       finds: own.filter((e) => e.type === EV.find).length
     });
   }
+  const lifts = [];
+  let liftHw = 1;
+  let liftHc = 0;
+  for (const e of kept) {
+    if (e.hw > liftHw) {
+      liftHw = e.hw;
+      liftHc = 0;
+    }
+  }
+  for (const e of kept) if (e.hw === liftHw && e.hc > liftHc) liftHc = e.hc;
+  if (kept.length > 0) {
+    liftHc += 1;
+    if (liftHc > HC_MAX) {
+      liftHw += 1;
+      liftHc = 0;
+    }
+  }
+  const firstSeq = opts.liftSeq === void 0 ? 1 : opts.liftSeq;
+  const raised = [];
+  for (let i = 0; i < 4; i++) if (merged.needs[i] > preNeeds[i]) raised.push([i, merged.needs[i]]);
+  if (merged.bond > preBond) raised.push([LIFT_BOND, merged.bond]);
+  for (const [k, value] of raised) {
+    lifts.push({
+      type: EV.lift,
+      t: merged.lastRaw,
+      tz: merged.eo,
+      dev: 0,
+      seq: firstSeq + lifts.length,
+      hw: liftHw,
+      hc: liftHc,
+      a: k << LIFT_K_SHIFT | value,
+      b: 0
+    });
+  }
   return {
     state: merged,
     hash: stateHash(merged),
@@ -1286,6 +1352,7 @@ function mergeDevices(base, streams, opts = {}) {
     droppedDuplicate,
     droppedWindow,
     refunds,
+    lifts,
     summary
   };
 }
@@ -1491,6 +1558,8 @@ function header() {
     "mode: " + (GATE ? "GATE TEST, short runs (" + CFG.fpsSeconds + " s fps window); these are not benchmark numbers" : "full (" + CFG.replayRuns + " replay runs, " + CFG.coatPerFamily + " coat solves per family, " + CFG.fpsSeconds + " s fps window)"),
     "note: desktop numbers are not phone numbers; every number below says its unit and how it was measured"
   ];
+  if (data.fixture) lines.push("creature fixture " + FILES.fixture + " preloaded before any engine was timed: " + f1(data.fixture.ms) + " ms; " + resText(data.fixture.bytes));
+  if (data.order) lines.push("engine order this run (" + data.orderNote + "): " + data.order.join(", "));
   return lines.join("\n");
 }
 function render() {
@@ -1662,9 +1731,24 @@ async function disposeEngine(h) {
   lastDisposedFrames = () => h.frames();
   return { canvases, framesAfter, pass: canvases === 0 && framesAfter === 0 };
 }
+async function preloadFixture() {
+  if (data.fixture) return;
+  const t0 = performance.now();
+  await loadModule("./" + FILES.fixture);
+  data.fixture = { ms: performance.now() - t0, bytes: resourceInfo(FILES.fixture, t0) };
+}
+function shuffled(list) {
+  const a = list.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 async function runEngine(eng) {
+  await preloadFixture();
   const id = eng.id;
-  const res = { errors: [] };
+  const res = { errors: [], startedAt: performance.now() };
   touched.add(id);
   data.engines[id] = res;
   const out = ["--- " + eng.label + " " + VERSIONS[id] + " (vendored from npm at the pinned version, bundled with esbuild, loaded only now) ---"];
@@ -1737,7 +1821,7 @@ async function runEngine(eng) {
   const mem = res.memAfterDispose;
   out.push("webgl renderer string: " + (res.glRenderer || "not available"));
   out.push("download of the engine file " + FILES.engines[id] + ": " + resText(res.bytes));
-  out.push("download of the creature fixture " + FILES.fixture + " (shared by all engines, not counted above): " + resText(res.fixtureBytes));
+  out.push("creature fixture: preloaded before this engine was timed (cost on its own line in the header), not counted in the import or first-frame times");
   if (res.importMs !== void 0) out.push("import time: " + f1(res.importMs) + " ms (tap to engine module evaluated; includes the download); engine create time: " + f1(res.createMs) + " ms (create renderer and scene)");
   if (res.firstFrameMs !== void 0) out.push("time to first non-blank frame: " + f1(res.firstFrameMs) + " ms (from the tap, includes import and create; first animation frame whose drawing buffer holds at least 300 creature-coloured pixels)");
   if (res.fps) {
@@ -1810,7 +1894,11 @@ function wire() {
   for (const eng of ENGINES) $("#run-" + eng.id).addEventListener("click", () => guarded(eng.label, () => runEngine(eng)));
   $("#run-all").addEventListener("click", () => guarded("everything", async () => {
     await runS2();
-    for (const eng of ENGINES) await runEngine(eng);
+    const forced = GATE ? new URLSearchParams(location.search).get("order") : null;
+    const order = forced ? forced.split(",").map((id) => ENGINES.find((e) => e.id === id)).filter(Boolean) : shuffled(ENGINES);
+    data.order = order.map((e) => e.label);
+    data.orderNote = forced ? "set by the gate" : "shuffled per run";
+    for (const eng of order) await runEngine(eng);
   }));
   $("#copy").addEventListener("click", async () => {
     const ta = $("#out");
@@ -1835,6 +1923,7 @@ window.__bench = {
   text: () => data.text,
   canvasCount: () => document.querySelectorAll("canvas").length,
   lastDisposedFrames: () => lastDisposedFrames(),
-  median
+  median,
+  shuffled
 };
 wire();
