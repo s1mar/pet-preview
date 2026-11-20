@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="bench-build" content="ab47506afc3f">
+  <title>Phone bench</title>
+  <style>
+    :root { color-scheme: dark light; }
+    body { margin: 0; padding: 12px 12px 72px; font: 16px/1.4 system-ui, sans-serif; background: #1d1830; color: #eee; }
+    h1 { font-size: 1.3rem; margin: 0 0 8px; }
+    p { margin: 6px 0; }
+    .warn { font-weight: 700; padding: 8px 10px; border-radius: 8px; background: #ffd84d; color: #222; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    button { font: inherit; padding: 12px 14px; border-radius: 10px; border: 0; background: #7b5cff; color: #fff; min-height: 44px; }
+    button:disabled { opacity: 0.5; }
+    button.alt { background: #3b3558; }
+    #status { min-height: 1.4em; font-weight: 600; }
+    #stage { width: 100%; overflow: hidden; margin: 8px 0; }
+    #stage canvas { display: block; max-width: 100% !important; height: auto !important; }
+    textarea { width: 100%; box-sizing: border-box; min-height: 22em; font: 12px/1.35 ui-monospace, Menlo, Consolas, monospace; background: #120f20; color: #eee; border: 1px solid #555; border-radius: 8px; padding: 8px; }
+    a { color: #b9a8ff; }
+  </style>
+</head>
+<body>
+  <h1>Phone bench</h1>
+  <p class="warn">Desktop numbers are not phone numbers.</p>
+  <p>Open this page on the phone you want to measure, tap a button, keep the page open and on screen until it says done, then tap Copy results and paste the block back. Everything is measured on this device and nothing is sent anywhere. This is not the game. <a href="../">Back to the preview</a></p>
+  <p id="cfg"></p>
+  <div class="row">
+    <button type="button" id="run-s2" data-run>Run S2 (replay and coat)</button>
+    <button type="button" id="run-babylon" data-run>Run Babylon.js</button>
+    <button type="button" id="run-three" data-run>Run three.js</button>
+    <button type="button" id="run-playcanvas" data-run>Run PlayCanvas engine</button>
+    <button type="button" id="run-all" data-run class="alt">Run everything</button>
+  </div>
+  <p id="status" role="status" aria-live="polite"></p>
+  <div id="stage"></div>
+  <div class="row"><button type="button" id="copy">Copy results</button><span id="copy-status" role="status"></span></div>
+  <textarea id="out" readonly aria-label="Results"></textarea>
+  <script type="module" src="bench.d94e240c.js"></script>
+</body>
+</html>

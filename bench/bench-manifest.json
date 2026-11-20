@@ -1,0 +1,36 @@
+{
+  "note": "list of the bench files; read by the packet scan only, never by the page",
+  "main": "bench.d94e240c.js",
+  "worker": "s2.worker.cf38cdee.js",
+  "fixture": "fixture.06bfa27e.js",
+  "engines": {
+    "babylon": "engine-babylon.bdbe7c59.js",
+    "three": "engine-three.ef004fee.js",
+    "playcanvas": "engine-playcanvas.81b69d31.js"
+  },
+  "versions": {
+    "babylon": "9.34.0",
+    "three": "0.187.0",
+    "playcanvas": "2.23.3"
+  },
+  "firstParty": [
+    "bench.d94e240c.js",
+    "s2.worker.cf38cdee.js",
+    "fixture.06bfa27e.js",
+    "index.html"
+  ],
+  "vendored": [
+    "engine-babylon.bdbe7c59.js",
+    "engine-three.ef004fee.js",
+    "engine-playcanvas.81b69d31.js"
+  ],
+  "files": [
+    "bench.d94e240c.js",
+    "engine-babylon.bdbe7c59.js",
+    "engine-playcanvas.81b69d31.js",
+    "engine-three.ef004fee.js",
+    "fixture.06bfa27e.js",
+    "index.html",
+    "s2.worker.cf38cdee.js"
+  ]
+}

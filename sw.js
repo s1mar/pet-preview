@@ -1,5 +1,5 @@
-// Pet Preview service worker. 9f6ca12113a6 and the precache list are filled in by scripts/build.mjs.
-const VERSION = "9f6ca12113a6";
+// Pet Preview service worker. ab47506afc3f and the precache list are filled in by scripts/build.mjs.
+const VERSION = "ab47506afc3f";
 // Cache names carry the scope path, so two copies on one origin (for example two sub-paths on a
 // shared Pages host) never delete each other's caches.
 const CACHE_PREFIX = "petpreview-" + new URL(self.registration.scope).pathname;
@@ -18,6 +18,10 @@ const PRECACHE = [
 ];
 const HASHED_ASSET = /\.[0-9a-f]{8}\.(?:js|css)$/;
 const API_PATH = /\/api\//;
+// The phone bench lives under bench/ in the preview packet. It is not part of the app: its files are not precached
+// (the engine files are about 3 MB) and this worker leaves every request under that path to the network, so a
+// navigation to bench/ is never answered with the cached app page.
+const BENCH_PATH = new URL("bench/", self.registration.scope).pathname;
 
 function abs(path) {
   return new URL(path, self.registration.scope).href;
@@ -51,6 +55,7 @@ self.addEventListener("fetch", (event) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin !== new URL(self.registration.scope).origin) return;
+  if (url.pathname.startsWith(BENCH_PATH)) return;
 
   // API: network only, never cached. Offline gives a small JSON error the app can handle.
   if (API_PATH.test(url.pathname)) {
