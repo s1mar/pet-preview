@@ -7,7 +7,7 @@ var __export = (target, all) => {
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // <define:__BENCH_FILES__>
-var define_BENCH_FILES_default = { worker: "s2.worker.62bc2860.js", fixture: "fixture.06bfa27e.js", engines: { babylon: "engine-babylon.bdbe7c59.js", three: "engine-three.ef004fee.js", playcanvas: "engine-playcanvas.81b69d31.js" } };
+var define_BENCH_FILES_default = { worker: "s2.worker.8204f69b.js", fixture: "fixture.06bfa27e.js", engines: { babylon: "engine-babylon.bdbe7c59.js", three: "engine-three.ef004fee.js", playcanvas: "engine-playcanvas.81b69d31.js" } };
 
 // <define:__BENCH_VERSIONS__>
 var define_BENCH_VERSIONS_default = { babylon: "9.34.0", three: "0.187.0", playcanvas: "2.23.3" };
@@ -25,6 +25,7 @@ __export(src_exports, {
   COAT_FAMILIES: () => COAT_FAMILIES,
   COAT_ITERS: () => COAT_ITERS,
   COAT_SIZE: () => COAT_SIZE,
+  CoatStepper: () => CoatStepper,
   Device: () => Device,
   ENERGY: () => ENERGY,
   EV: () => EV,
@@ -418,6 +419,148 @@ function solveCoat(family, scale, seed, size = COAT_SIZE, iters = COAT_ITERS) {
   }
   return px;
 }
+var CoatStepper = class {
+  constructor(family, scale, seed, size = COAT_SIZE, iters = COAT_ITERS) {
+    __publicField(this, "n");
+    __publicField(this, "iters");
+    __publicField(this, "du");
+    __publicField(this, "dv");
+    __publicField(this, "fk");
+    __publicField(this, "feed");
+    __publicField(this, "u");
+    __publicField(this, "v");
+    __publicField(this, "u2");
+    __publicField(this, "v2");
+    __publicField(this, "it", 0);
+    if (!Number.isInteger(family) || family < 0 || family >= PATTERN_FAMILIES) throw new SpecError("coat", "bad family");
+    if (!Number.isInteger(scale) || scale < SCALE_MIN || scale > SCALE_MAX) throw new SpecError("coat", "bad scale");
+    if (!Number.isInteger(size) || size < 8 || size > COAT_SIZE || (size & size - 1) !== 0) throw new SpecError("coat", "bad size");
+    if (!Number.isInteger(iters) || iters < 0 || iters > 4096) throw new SpecError("coat", "bad iterations");
+    const fam = COAT_FAMILIES[family];
+    const n = size;
+    const mask = n - 1;
+    this.n = n;
+    this.iters = iters;
+    this.du = DU_Q8 * (scale + 16) >> 5;
+    this.dv = DV_Q8 * (scale + 16) >> 5;
+    this.fk = fam.f + fam.k;
+    this.feed = fam.f;
+    const u = new Int32Array(n * n).fill(ONE);
+    const v = new Int32Array(n * n);
+    const rng = new Rng(seed);
+    const blobs = 4 + (n * n >> 13) + (scale >> 2);
+    for (let b = 0; b < blobs; b++) {
+      const cx = rng.below(n);
+      const cy = rng.below(n);
+      for (let dy = 0; dy < BLOB; dy++) {
+        for (let dx = 0; dx < BLOB; dx++) {
+          const idx = (cy + dy & mask) * n + (cx + dx & mask);
+          u[idx] = ONE >> 1;
+          v[idx] = ONE >> 2;
+        }
+      }
+    }
+    this.u = u;
+    this.v = v;
+    this.u2 = new Int32Array(n * n);
+    this.v2 = new Int32Array(n * n);
+  }
+  get done() {
+    return this.it >= this.iters;
+  }
+  /** Iterations finished so far (of the total passed to the constructor). */
+  get progress() {
+    return this.it;
+  }
+  /** Run at most maxIters more iterations (at least one). Returns true when the solve is finished. */
+  step(maxIters = 1) {
+    const n = this.n;
+    const mask = n - 1;
+    const du = this.du;
+    const dv = this.dv;
+    const fk = this.fk;
+    const feed = this.feed;
+    const half = ONE >> 1;
+    let u = this.u;
+    let v = this.v;
+    let u2 = this.u2;
+    let v2 = this.v2;
+    const want = maxIters | 0;
+    const end = this.it + (want < 1 ? 1 : want);
+    const stop = end > this.iters ? this.iters : end;
+    for (let it = this.it; it < stop; it++) {
+      for (let y = 0; y < n; y++) {
+        const r0 = (y - 1 & mask) * n;
+        const r1 = y * n;
+        const r2 = (y + 1 & mask) * n;
+        let ual = u[r0 + mask];
+        let uac = u[r0];
+        let ubl = u[r1 + mask];
+        let ubc = u[r1];
+        let udl = u[r2 + mask];
+        let udc = u[r2];
+        let val = v[r0 + mask];
+        let vac = v[r0];
+        let vbl = v[r1 + mask];
+        let vbc = v[r1];
+        let vdl = v[r2 + mask];
+        let vdc = v[r2];
+        for (let x = 0; x < n; x++) {
+          const xr = x + 1 & mask;
+          const uar = u[r0 + xr];
+          const ubr = u[r1 + xr];
+          const udr = u[r2 + xr];
+          const var_ = v[r0 + xr];
+          const vbr = v[r1 + xr];
+          const vdr = v[r2 + xr];
+          const i = r1 + x;
+          const lu = 51 * (uac + udc + ubl + ubr) + 13 * (ual + uar + udl + udr) - 256 * ubc;
+          const lv = 51 * (vac + vdc + vbl + vbr) + 13 * (val + var_ + vdl + vdr) - 256 * vbc;
+          const vv = vbc * vbc + half >> Q;
+          const uvv = vv * ubc + half >> Q;
+          const nu = ubc + (du * lu >> 16) - uvv + (feed * (ONE - ubc) + half >> Q);
+          const nv = vbc + (dv * lv >> 16) + uvv - (fk * vbc + half >> Q);
+          u2[i] = nu < 0 ? 0 : nu > ONE ? ONE : nu;
+          v2[i] = nv < 0 ? 0 : nv > ONE ? ONE : nv;
+          ual = uac;
+          uac = uar;
+          ubl = ubc;
+          ubc = ubr;
+          udl = udc;
+          udc = udr;
+          val = vac;
+          vac = var_;
+          vbl = vbc;
+          vbc = vbr;
+          vdl = vdc;
+          vdc = vdr;
+        }
+      }
+      let t = u;
+      u = u2;
+      u2 = t;
+      t = v;
+      v = v2;
+      v2 = t;
+    }
+    this.u = u;
+    this.v = v;
+    this.u2 = u2;
+    this.v2 = v2;
+    this.it = stop;
+    return this.done;
+  }
+  /** Pixel bytes of the current state; equals solveCoat's output once done. */
+  pixels() {
+    const v = this.v;
+    const px = new Uint8Array(this.n * this.n);
+    for (let i = 0; i < px.length; i++) {
+      const p = v[i] * 510 >> Q;
+      px[i] = p > 255 ? 255 : p;
+    }
+    return px;
+  }
+};
 function coatHash(pixels) {
   return fnv32(pixels);
 }
