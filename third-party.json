@@ -10,6 +10,22 @@
       ]
     },
     {
+      "name": "@fontsource/caveat",
+      "version": "5.3.0",
+      "license": "OFL-1.1",
+      "bundles": [
+        "shell-and-game-app"
+      ]
+    },
+    {
+      "name": "@fontsource/fraunces",
+      "version": "5.3.0",
+      "license": "OFL-1.1",
+      "bundles": [
+        "shell-and-game-app"
+      ]
+    },
+    {
       "name": "playcanvas",
       "version": "2.23.3",
       "license": "MIT",
@@ -65,9 +81,9 @@
     },
     {
       "bundle": "shell-and-game-app",
-      "inputs": 49,
-      "thirdPartyInputs": 0,
-      "packages": 0
+      "inputs": 65,
+      "thirdPartyInputs": 2,
+      "packages": 2
     },
     {
       "bundle": "sw",
