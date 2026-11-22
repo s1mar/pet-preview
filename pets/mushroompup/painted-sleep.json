@@ -1,0 +1,54 @@
+{
+ "headC": [
+  0.62,
+  0.58
+ ],
+ "headR": 0.2,
+ "eyeL": [
+  0.57,
+  0.57
+ ],
+ "eyeR": [
+  0.73,
+  0.64
+ ],
+ "eyeR_px": 0.025,
+ "mouth": [
+  0.64,
+  0.77
+ ],
+ "earTips": [
+  [
+   0.43,
+   0.62
+  ],
+  [
+   0.85,
+   0.78
+  ]
+ ],
+ "capC": [
+  0.7,
+  0.25
+ ],
+ "bodyC": [
+  0.3,
+  0.62
+ ],
+ "tailTip": [
+  0.2,
+  0.76
+ ],
+ "breathC": [
+  0.3,
+  0.6
+ ],
+ "species": "mushroompup",
+ "look": "painted",
+ "pose": "sleep",
+ "width": 768,
+ "height": 526,
+ "mirrored": false,
+ "facing": null,
+ "units": "normalized 0..1 of image; headR and eyeR_px are fractions of image width"
+}

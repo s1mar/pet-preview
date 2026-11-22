@@ -1,0 +1,50 @@
+{
+ "headC": [
+  0.68,
+  0.27
+ ],
+ "headR": 0.15,
+ "eyeL": [
+  0.67,
+  0.26
+ ],
+ "eyeR": [
+  0.78,
+  0.36
+ ],
+ "eyeR_px": 0.02,
+ "mouth": [
+  0.72,
+  0.41
+ ],
+ "earTips": [
+  [
+   0.64,
+   0.07
+  ],
+  [
+   0.86,
+   0.28
+  ]
+ ],
+ "bodyC": [
+  0.35,
+  0.45
+ ],
+ "tailTip": [
+  0.88,
+  0.62
+ ],
+ "breathC": [
+  0.35,
+  0.4
+ ],
+ "species": "otter",
+ "look": "painted",
+ "pose": "sleep",
+ "width": 768,
+ "height": 660,
+ "mirrored": false,
+ "facing": null,
+ "units": "normalized 0..1 of image; headR and eyeR_px are fractions of image width"
+}

@@ -1,0 +1,54 @@
+{
+ "headC": [
+  0.32,
+  0.27
+ ],
+ "headR": 0.25,
+ "eyeL": [
+  0.24,
+  0.28
+ ],
+ "eyeR": [
+  0.43,
+  0.3
+ ],
+ "eyeR_px": 0.035,
+ "mouth": [
+  0.37,
+  0.42
+ ],
+ "earTips": [
+  [
+   0.09,
+   0.29
+  ],
+  [
+   0.49,
+   0.08
+  ]
+ ],
+ "bodyC": [
+  0.6,
+  0.42
+ ],
+ "tailRoot": [
+  0.72,
+  0.8
+ ],
+ "tailTip": [
+  0.06,
+  0.86
+ ],
+ "breathC": [
+  0.6,
+  0.4
+ ],
+ "species": "otter",
+ "look": "mascot",
+ "pose": "sleep",
+ "width": 768,
+ "height": 617,
+ "mirrored": false,
+ "facing": null,
+ "units": "normalized 0..1 of image; headR and eyeR_px are fractions of image width"
+}

@@ -8,7 +8,8 @@
    "files": {
     "painted-stand": "fox/painted-stand.webp",
     "painted-sleep": "fox/painted-sleep.webp",
-    "mascot-stand": "fox/mascot-stand.webp"
+    "mascot-stand": "fox/mascot-stand.webp",
+    "mascot-sleep": "fox/mascot-sleep.webp"
    }
   },
   {
@@ -18,7 +19,9 @@
    "palette": "#8ec5e8",
    "files": {
     "painted-stand": "cloudbird/painted-stand.webp",
-    "mascot-stand": "cloudbird/mascot-stand.webp"
+    "painted-sleep": "cloudbird/painted-sleep.webp",
+    "mascot-stand": "cloudbird/mascot-stand.webp",
+    "mascot-sleep": "cloudbird/mascot-sleep.webp"
    }
   },
   {
@@ -28,7 +31,9 @@
    "palette": "#e8896a",
    "files": {
     "painted-stand": "dragonling/painted-stand.webp",
-    "mascot-stand": "dragonling/mascot-stand.webp"
+    "painted-sleep": "dragonling/painted-sleep.webp",
+    "mascot-stand": "dragonling/mascot-stand.webp",
+    "mascot-sleep": "dragonling/mascot-sleep.webp"
    }
   },
   {
@@ -38,7 +43,9 @@
    "palette": "#c8372d",
    "files": {
     "painted-stand": "mushroompup/painted-stand.webp",
-    "mascot-stand": "mushroompup/mascot-stand.webp"
+    "painted-sleep": "mushroompup/painted-sleep.webp",
+    "mascot-stand": "mushroompup/mascot-stand.webp",
+    "mascot-sleep": "mushroompup/mascot-sleep.webp"
    }
   },
   {
@@ -48,7 +55,9 @@
    "palette": "#6aa84f",
    "files": {
     "painted-stand": "sprite/painted-stand.webp",
-    "painted-sleep": "sprite/painted-sleep.webp"
+    "painted-sleep": "sprite/painted-sleep.webp",
+    "mascot-stand": "sprite/mascot-stand.webp",
+    "mascot-sleep": "sprite/mascot-sleep.webp"
    }
   },
   {
@@ -56,7 +65,12 @@
    "name": "River otter-spirit",
    "blurb": "Cheerful and restless; turns every moment into a game.",
    "palette": "#2f8aa5",
-   "files": {}
+   "files": {
+    "painted-stand": "otter/painted-stand.webp",
+    "painted-sleep": "otter/painted-sleep.webp",
+    "mascot-stand": "otter/mascot-stand.webp",
+    "mascot-sleep": "otter/mascot-sleep.webp"
+   }
   },
   {
    "id": "moth",

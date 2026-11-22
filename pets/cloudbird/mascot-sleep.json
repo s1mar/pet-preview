@@ -1,0 +1,45 @@
+{
+ "headC": [
+  0.38,
+  0.33
+ ],
+ "headR": 0.28,
+ "eyeL": [
+  0.18,
+  0.425
+ ],
+ "eyeR": [
+  0.43,
+  0.44
+ ],
+ "eyeR_px": 0.04,
+ "mouth": [
+  0.28,
+  0.47
+ ],
+ "earTips": [],
+ "crestTip": [
+  0.52,
+  0.07
+ ],
+ "bodyC": [
+  0.55,
+  0.62
+ ],
+ "tailTip": [
+  0.93,
+  0.66
+ ],
+ "breathC": [
+  0.5,
+  0.62
+ ],
+ "species": "cloudbird",
+ "look": "mascot",
+ "pose": "sleep",
+ "width": 768,
+ "height": 741,
+ "mirrored": false,
+ "facing": null,
+ "units": "normalized 0..1 of image; headR and eyeR_px are fractions of image width"
+}

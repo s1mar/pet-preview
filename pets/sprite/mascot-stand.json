@@ -1,0 +1,55 @@
+{
+ "headC": [
+  0.53,
+  0.42
+ ],
+ "headR": 0.38,
+ "neck": [
+  0.53,
+  0.58
+ ],
+ "eyeL": [
+  0.52,
+  0.43
+ ],
+ "eyeR": [
+  0.81,
+  0.42
+ ],
+ "eyeR_px": 0.05,
+ "mouth": [
+  0.64,
+  0.49
+ ],
+ "earTips": [
+  [
+   0.06,
+   0.4
+  ],
+  [
+   0.93,
+   0.4
+  ]
+ ],
+ "crestTip": [
+  0.22,
+  0.04
+ ],
+ "feetY": 0.96,
+ "bellyC": [
+  0.52,
+  0.72
+ ],
+ "bodyC": [
+  0.52,
+  0.72
+ ],
+ "species": "sprite",
+ "look": "mascot",
+ "pose": "stand",
+ "width": 313,
+ "height": 768,
+ "mirrored": false,
+ "facing": "right",
+ "units": "normalized 0..1 of image; headR and eyeR_px are fractions of image width"
+}

@@ -1,13 +1,13 @@
-// Pet Preview service worker. a03f91f3f4b9 and the precache list are filled in by scripts/build.mjs.
-const VERSION = "a03f91f3f4b9";
+// Pet Preview service worker. 32cc27baaa52 and the precache list are filled in by scripts/build.mjs.
+const VERSION = "32cc27baaa52";
 // Cache names carry the scope path, so two copies on one origin (for example two sub-paths on a
 // shared Pages host) never delete each other's caches.
 const CACHE_PREFIX = "petpreview-" + new URL(self.registration.scope).pathname;
 const CACHE = CACHE_PREFIX + VERSION;
 const PRECACHE = [
   "./",
-  "app.571f69e9.js",
-  "coat-worker.9c14986b.js",
+  "app.b6263554.js",
+  "coat-worker.3714a492.js",
   "fonts/FONT-LICENSES.txt",
   "fonts/caveat-latin-600-normal.woff2",
   "fonts/fraunces-latin-600-normal.woff2",
@@ -17,14 +17,24 @@ const PRECACHE = [
   "icons/icon-maskable-512.png",
   "index.html",
   "manifest.webmanifest",
+  "pets/cloudbird/mascot-sleep.json",
+  "pets/cloudbird/mascot-sleep.webp",
   "pets/cloudbird/mascot-stand.json",
   "pets/cloudbird/mascot-stand.webp",
+  "pets/cloudbird/painted-sleep.json",
+  "pets/cloudbird/painted-sleep.webp",
   "pets/cloudbird/painted-stand.json",
   "pets/cloudbird/painted-stand.webp",
+  "pets/dragonling/mascot-sleep.json",
+  "pets/dragonling/mascot-sleep.webp",
   "pets/dragonling/mascot-stand.json",
   "pets/dragonling/mascot-stand.webp",
+  "pets/dragonling/painted-sleep.json",
+  "pets/dragonling/painted-sleep.webp",
   "pets/dragonling/painted-stand.json",
   "pets/dragonling/painted-stand.webp",
+  "pets/fox/mascot-sleep.json",
+  "pets/fox/mascot-sleep.webp",
   "pets/fox/mascot-stand.json",
   "pets/fox/mascot-stand.webp",
   "pets/fox/painted-sleep.json",
@@ -32,15 +42,31 @@ const PRECACHE = [
   "pets/fox/painted-stand.json",
   "pets/fox/painted-stand.webp",
   "pets/index.json",
+  "pets/mushroompup/mascot-sleep.json",
+  "pets/mushroompup/mascot-sleep.webp",
   "pets/mushroompup/mascot-stand.json",
   "pets/mushroompup/mascot-stand.webp",
+  "pets/mushroompup/painted-sleep.json",
+  "pets/mushroompup/painted-sleep.webp",
   "pets/mushroompup/painted-stand.json",
   "pets/mushroompup/painted-stand.webp",
+  "pets/otter/mascot-sleep.json",
+  "pets/otter/mascot-sleep.webp",
+  "pets/otter/mascot-stand.json",
+  "pets/otter/mascot-stand.webp",
+  "pets/otter/painted-sleep.json",
+  "pets/otter/painted-sleep.webp",
+  "pets/otter/painted-stand.json",
+  "pets/otter/painted-stand.webp",
+  "pets/sprite/mascot-sleep.json",
+  "pets/sprite/mascot-sleep.webp",
+  "pets/sprite/mascot-stand.json",
+  "pets/sprite/mascot-stand.webp",
   "pets/sprite/painted-sleep.json",
   "pets/sprite/painted-sleep.webp",
   "pets/sprite/painted-stand.json",
   "pets/sprite/painted-stand.webp",
-  "styles.293573e5.css"
+  "styles.64cd2971.css"
 ];
 const HASHED_ASSET = /\.[0-9a-f]{8}\.(?:js|css)$/;
 const API_PATH = /\/api\//;

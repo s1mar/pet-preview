@@ -7,7 +7,7 @@ var __export = (target, all) => {
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // <define:__BENCH_FILES__>
-var define_BENCH_FILES_default = { worker: "s2.worker.cbdf5955.js", fixture: "fixture.06bfa27e.js", engines: { babylon: "engine-babylon.bdbe7c59.js", three: "engine-three.ef004fee.js", playcanvas: "engine-playcanvas.81b69d31.js" } };
+var define_BENCH_FILES_default = { worker: "s2.worker.548b7ba7.js", fixture: "fixture.06bfa27e.js", engines: { babylon: "engine-babylon.bdbe7c59.js", three: "engine-three.ef004fee.js", playcanvas: "engine-playcanvas.81b69d31.js" } };
 
 // <define:__BENCH_VERSIONS__>
 var define_BENCH_VERSIONS_default = { babylon: "9.34.0", three: "0.187.0", playcanvas: "2.23.3" };
@@ -435,6 +435,8 @@ var CoatStepper = class {
     __publicField(this, "u2");
     __publicField(this, "v2");
     __publicField(this, "it", 0);
+    /** Rows of iteration `it` already written into u2/v2 by stepRows (0 between iterations). */
+    __publicField(this, "row", 0);
     if (!Number.isInteger(family) || family < 0 || family >= PATTERN_FAMILIES) throw new SpecError("coat", "bad family");
     if (!Number.isInteger(scale) || scale < SCALE_MIN || scale > SCALE_MAX) throw new SpecError("coat", "bad scale");
     if (!Number.isInteger(size) || size < 8 || size > COAT_SIZE || (size & size - 1) !== 0) throw new SpecError("coat", "bad size");
@@ -475,8 +477,93 @@ var CoatStepper = class {
   get progress() {
     return this.it;
   }
+  /**
+   * Row-banded form of step(): run at most maxRows more rows (at least one) of the current iteration, and swap the
+   * buffers and count the iteration when its last row is written. The arithmetic is step()'s, row for row, and an
+   * iteration reads only the previous buffers, so any band sizes give exactly the bytes of step() (tested). One whole
+   * iteration of the full grid is tens of ms on a phone; a band is a fraction of that, so a caller can keep each
+   * slice short. Returns true when the solve is finished.
+   */
+  stepRows(maxRows = 1) {
+    if (this.it >= this.iters) return true;
+    const n = this.n;
+    const mask = n - 1;
+    const du = this.du;
+    const dv = this.dv;
+    const fk = this.fk;
+    const feed = this.feed;
+    const half = ONE >> 1;
+    const u = this.u;
+    const v = this.v;
+    const u2 = this.u2;
+    const v2 = this.v2;
+    const want = maxRows | 0;
+    const y0 = this.row;
+    const end = y0 + (want < 1 ? 1 : want);
+    const y1 = end > n ? n : end;
+    for (let y = y0; y < y1; y++) {
+      const r0 = (y - 1 & mask) * n;
+      const r1 = y * n;
+      const r2 = (y + 1 & mask) * n;
+      let ual = u[r0 + mask];
+      let uac = u[r0];
+      let ubl = u[r1 + mask];
+      let ubc = u[r1];
+      let udl = u[r2 + mask];
+      let udc = u[r2];
+      let val = v[r0 + mask];
+      let vac = v[r0];
+      let vbl = v[r1 + mask];
+      let vbc = v[r1];
+      let vdl = v[r2 + mask];
+      let vdc = v[r2];
+      for (let x = 0; x < n; x++) {
+        const xr = x + 1 & mask;
+        const uar = u[r0 + xr];
+        const ubr = u[r1 + xr];
+        const udr = u[r2 + xr];
+        const var_ = v[r0 + xr];
+        const vbr = v[r1 + xr];
+        const vdr = v[r2 + xr];
+        const i = r1 + x;
+        const lu = 51 * (uac + udc + ubl + ubr) + 13 * (ual + uar + udl + udr) - 256 * ubc;
+        const lv = 51 * (vac + vdc + vbl + vbr) + 13 * (val + var_ + vdl + vdr) - 256 * vbc;
+        const vv = vbc * vbc + half >> Q;
+        const uvv = vv * ubc + half >> Q;
+        const nu = ubc + (du * lu >> 16) - uvv + (feed * (ONE - ubc) + half >> Q);
+        const nv = vbc + (dv * lv >> 16) + uvv - (fk * vbc + half >> Q);
+        u2[i] = nu < 0 ? 0 : nu > ONE ? ONE : nu;
+        v2[i] = nv < 0 ? 0 : nv > ONE ? ONE : nv;
+        ual = uac;
+        uac = uar;
+        ubl = ubc;
+        ubc = ubr;
+        udl = udc;
+        udc = udr;
+        val = vac;
+        vac = var_;
+        vbl = vbc;
+        vbc = vbr;
+        vdl = vdc;
+        vdc = vdr;
+      }
+    }
+    if (y1 >= n) {
+      this.u = u2;
+      this.u2 = u;
+      this.v = v2;
+      this.v2 = v;
+      this.row = 0;
+      this.it++;
+    } else {
+      this.row = y1;
+    }
+    return this.done;
+  }
   /** Run at most maxIters more iterations (at least one). Returns true when the solve is finished. */
   step(maxIters = 1) {
+    if (this.row !== 0) this.stepRows(this.n - this.row);
+    if (this.it >= this.iters) return true;
     const n = this.n;
     const mask = n - 1;
     const du = this.du;
