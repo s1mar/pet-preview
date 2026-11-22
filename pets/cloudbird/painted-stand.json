@@ -1,0 +1,66 @@
+{
+ "headC": [
+  0.52,
+  0.35
+ ],
+ "headR": 0.22,
+ "neck": [
+  0.5,
+  0.5
+ ],
+ "eyeL": [
+  0.59,
+  0.385
+ ],
+ "eyeR": [
+  0.8,
+  0.37
+ ],
+ "eyeR_px": 0.032,
+ "mouth": [
+  0.72,
+  0.43
+ ],
+ "earTips": [],
+ "crestTip": [
+  0.65,
+  0.1
+ ],
+ "wings": [
+  {
+   "root": [
+    0.35,
+    0.62
+   ],
+   "tip": [
+    0.12,
+    0.72
+   ]
+  }
+ ],
+ "tailRoot": [
+  0.15,
+  0.55
+ ],
+ "tailTip": [
+  0.07,
+  0.46
+ ],
+ "feetY": 0.96,
+ "bellyC": [
+  0.55,
+  0.65
+ ],
+ "bodyC": [
+  0.5,
+  0.6
+ ],
+ "species": "cloudbird",
+ "look": "painted",
+ "pose": "stand",
+ "width": 715,
+ "height": 768,
+ "mirrored": false,
+ "facing": "right",
+ "units": "normalized 0..1 of image; headR and eyeR_px are fractions of image width"
+}

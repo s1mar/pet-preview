@@ -1,0 +1,76 @@
+{
+ "species": [
+  {
+   "id": "fox",
+   "name": "Fox kit",
+   "blurb": "Bold and curious; always has one ear turned to the next adventure.",
+   "palette": "#d9722e",
+   "files": {
+    "painted-stand": "fox/painted-stand.webp",
+    "painted-sleep": "fox/painted-sleep.webp",
+    "mascot-stand": "fox/mascot-stand.webp"
+   }
+  },
+  {
+   "id": "cloudbird",
+   "name": "Cloud-bird",
+   "blurb": "Gentle and drifty; fluffs up when happy and naps anywhere soft.",
+   "palette": "#8ec5e8",
+   "files": {
+    "painted-stand": "cloudbird/painted-stand.webp",
+    "mascot-stand": "cloudbird/mascot-stand.webp"
+   }
+  },
+  {
+   "id": "dragonling",
+   "name": "Dragonling",
+   "blurb": "Proud and playful; hoards shiny things and loves a fuss.",
+   "palette": "#e8896a",
+   "files": {
+    "painted-stand": "dragonling/painted-stand.webp",
+    "mascot-stand": "dragonling/mascot-stand.webp"
+   }
+  },
+  {
+   "id": "mushroompup",
+   "name": "Mushroom pup",
+   "blurb": "Loyal and clingy; follows you everywhere and loves damp, rainy days.",
+   "palette": "#c8372d",
+   "files": {
+    "painted-stand": "mushroompup/painted-stand.webp",
+    "mascot-stand": "mushroompup/mascot-stand.webp"
+   }
+  },
+  {
+   "id": "sprite",
+   "name": "Forest sprite",
+   "blurb": "Shy and quick; hums to plants and hides when startled.",
+   "palette": "#6aa84f",
+   "files": {
+    "painted-stand": "sprite/painted-stand.webp",
+    "painted-sleep": "sprite/painted-sleep.webp"
+   }
+  },
+  {
+   "id": "otter",
+   "name": "River otter-spirit",
+   "blurb": "Cheerful and restless; turns every moment into a game.",
+   "palette": "#2f8aa5",
+   "files": {}
+  },
+  {
+   "id": "moth",
+   "name": "Star moth",
+   "blurb": "Dreamy night-owl; glows brighter when it feels safe.",
+   "palette": "#4b3f8f",
+   "files": {}
+  },
+  {
+   "id": "tortoise",
+   "name": "Pebble tortoise",
+   "blurb": "Calm and stubborn; slow to start, impossible to rush.",
+   "palette": "#9a8f7a",
+   "files": {}
+  }
+ ]
+}

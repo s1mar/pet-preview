@@ -1,12 +1,12 @@
-// Pet Preview service worker. cbc51a3505eb and the precache list are filled in by scripts/build.mjs.
-const VERSION = "cbc51a3505eb";
+// Pet Preview service worker. a03f91f3f4b9 and the precache list are filled in by scripts/build.mjs.
+const VERSION = "a03f91f3f4b9";
 // Cache names carry the scope path, so two copies on one origin (for example two sub-paths on a
 // shared Pages host) never delete each other's caches.
 const CACHE_PREFIX = "petpreview-" + new URL(self.registration.scope).pathname;
 const CACHE = CACHE_PREFIX + VERSION;
 const PRECACHE = [
   "./",
-  "app.cb16fd1c.js",
+  "app.571f69e9.js",
   "coat-worker.9c14986b.js",
   "fonts/FONT-LICENSES.txt",
   "fonts/caveat-latin-600-normal.woff2",
@@ -17,7 +17,30 @@ const PRECACHE = [
   "icons/icon-maskable-512.png",
   "index.html",
   "manifest.webmanifest",
-  "styles.e44295fa.css"
+  "pets/cloudbird/mascot-stand.json",
+  "pets/cloudbird/mascot-stand.webp",
+  "pets/cloudbird/painted-stand.json",
+  "pets/cloudbird/painted-stand.webp",
+  "pets/dragonling/mascot-stand.json",
+  "pets/dragonling/mascot-stand.webp",
+  "pets/dragonling/painted-stand.json",
+  "pets/dragonling/painted-stand.webp",
+  "pets/fox/mascot-stand.json",
+  "pets/fox/mascot-stand.webp",
+  "pets/fox/painted-sleep.json",
+  "pets/fox/painted-sleep.webp",
+  "pets/fox/painted-stand.json",
+  "pets/fox/painted-stand.webp",
+  "pets/index.json",
+  "pets/mushroompup/mascot-stand.json",
+  "pets/mushroompup/mascot-stand.webp",
+  "pets/mushroompup/painted-stand.json",
+  "pets/mushroompup/painted-stand.webp",
+  "pets/sprite/painted-sleep.json",
+  "pets/sprite/painted-sleep.webp",
+  "pets/sprite/painted-stand.json",
+  "pets/sprite/painted-stand.webp",
+  "styles.293573e5.css"
 ];
 const HASHED_ASSET = /\.[0-9a-f]{8}\.(?:js|css)$/;
 const API_PATH = /\/api\//;

@@ -667,11 +667,8 @@ a { color: var(--md-primary); text-underline-offset: 0.18em; }
 
 /* The four petting tags hang from the sides of the pet picture, below the band the toast uses */
 .stage-tags { position: absolute; z-index: 3; top: 0.7rem; bottom: 0.65rem; left: var(--gutter); right: var(--gutter); display: block; padding: 0; gap: 0; pointer-events: none; }
-.stage-tags .btn.tag { position: absolute; pointer-events: auto; margin: 0; }
-.stage-tags #btn-pet-head { left: -0.9rem; top: 34%; }
-.stage-tags #btn-pet-tail { left: -0.9rem; top: 66%; }
-.stage-tags #btn-pet-back { right: -0.9rem; top: 34%; }
-.stage-tags #btn-pet-belly { right: -0.9rem; top: 66%; }
+/* Each tag hangs at its body part: care.js places it from the renderer's zone centre (the anchors of the art), left and top in px */
+.stage-tags .btn.tag { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); pointer-events: auto; margin: 0; min-width: 3.4rem; min-height: 2.75rem; }
 
 /* Treat packets: a short name, wrapping when the text is large */
 .chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: 0.8rem 0.7rem; }
@@ -751,10 +748,7 @@ html, html:has(.stage-wrap:not([hidden])), .stage.game-main { scroll-padding-top
 /* ---- the four petting tags: only while the pet is touched, hovered or a tag has focus (they stay real buttons for everyone) ---- */
 .stage-tags .btn.tag { opacity: 0; transition: opacity 160ms var(--md-ease); }
 .stage-wrap:hover .stage-tags .btn.tag, .stage-wrap:active .stage-tags .btn.tag, .stage-wrap:focus-within .stage-tags .btn.tag, .stage-tags .btn.tag:focus-visible { opacity: 1; }
-/* the stage tags sit just inside the frame, so they never hang over the picture's edge */
-.stage-tags #btn-pet-head, .stage-tags #btn-pet-tail { left: 0.3rem; }
-.stage-tags #btn-pet-back, .stage-tags #btn-pet-belly { right: 0.3rem; }
-.toast.on-stage { margin-top: 0.1rem; }
+.toast.on-stage { margin-top: 0; transform: translate(-50%, -100%) rotate(-1.2deg); } /* app.js sets top to the picture bottom; the note sits on that edge, inside the picture */
 
 /* ---- treat packets on the care screen ---- */
 .chip.packet { justify-content: flex-start; gap: 0.5rem; }
@@ -839,3 +833,12 @@ html, html:has(.stage-wrap:not([hidden])), .stage.game-main { scroll-padding-top
 .advanced-body .facts dd.small { margin: 0 0 0.6rem; }
 .advanced-body .facts dt { font-weight: 600; color: var(--md-on-surface); }
 .advanced-body .facts dd { user-select: all; }
+/* ---- round 4: large text on a narrow phone (320 px at 200 percent). Sizes stay in rem so they follow the text setting, but are
+   capped in px so the chrome (title, icon buttons, bar, tab labels) cannot eat the screen. At 100 percent every cap is above the rem value. ---- */
+.bar { padding-right: min(0.5rem, 8px); gap: min(0.5rem, 8px); }
+.bar h1 { min-width: 0; font-size: min(1.75rem, 36px); line-height: min(2rem, 44px); overflow: hidden; overflow-wrap: normal; word-break: keep-all; white-space: nowrap; text-overflow: ellipsis; }
+.bar-actions { flex: none; gap: 0; }
+.icon-btn { width: min(3rem, 48px); height: min(3rem, 48px); }
+.icon-btn .icon { width: min(1.5rem, 28px); height: min(1.5rem, 28px); }
+:root { --gutter: min(1rem, 16px); }
+.navbar .nav-item { min-height: min(3rem, 48px); padding-inline: 0; }
