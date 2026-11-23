@@ -1,9 +1,9 @@
 {
  "headC": [
-  0.5,
-  0.4
+  0.55,
+  0.41
  ],
- "headR": 0.22,
+ "headR": 0.23,
  "neck": [
   0.5,
   0.52
@@ -18,8 +18,8 @@
  ],
  "eyeR_px": 0.035,
  "mouth": [
-  0.55,
-  0.42
+  0.68,
+  0.466
  ],
  "earTips": [],
  "crestTip": [
@@ -52,5 +52,15 @@
  "facing": "right",
  "units": "normalized 0..1 of image; headR and eyeR_px are fractions of image width",
  "eyeRadL": 0.058,
- "eyeRadR": 0.038
+ "eyeRadR": 0.038,
+ "irisL": [
+  0.54,
+  0.407
+ ],
+ "irisR": [
+  0.768,
+  0.397
+ ],
+ "irisRadL": 0.039,
+ "irisRadR": 0.0265
 }
