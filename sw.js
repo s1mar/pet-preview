@@ -1,5 +1,5 @@
-// Pet Preview service worker. fbbb190e6174 and the precache list are filled in by scripts/build.mjs.
-const VERSION = "fbbb190e6174";
+// Pet Preview service worker. 02ffa6c16f0e and the precache list are filled in by scripts/build.mjs.
+const VERSION = "02ffa6c16f0e";
 // Cache names carry the scope path, so two copies on one origin (for example two sub-paths on a
 // shared Pages host) never delete each other's caches.
 const CACHE_PREFIX = "petpreview-" + new URL(self.registration.scope).pathname;
@@ -7,7 +7,7 @@ const CACHE = CACHE_PREFIX + VERSION;
 const PRECACHE = [
   "./",
   "THIRD_PARTY_NOTICES.txt",
-  "app.23e9c7c1.js",
+  "app.329eba3d.js",
   "coat-worker.3714a492.js",
   "fonts/FONT-LICENSES.txt",
   "fonts/caveat-latin-600-normal.woff2",
