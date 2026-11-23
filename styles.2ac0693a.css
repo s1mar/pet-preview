@@ -765,7 +765,7 @@ a { color: var(--md-primary); text-underline-offset: 0.18em; }
    pet's name and one quote line), a light bottom bar, the stamp album, jars and portraits, and tags that appear only when asked.
    Colour pairs used here are the same tokens as above (checked in test/contrast-unit.mjs).
    ============================================================================================================================ */
-:root { --nav-h: calc(min(3.6rem, 64px) + env(safe-area-inset-bottom, 0px)); --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+:root { --nav-min: calc(min(3.6rem, 64px) + env(safe-area-inset-bottom, 0px)); --nav-h: var(--nav-min); --bar-h: 3.75rem; --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
 /* things scrolled to or focused stop below the pinned scene and above the bar (app.js keeps --stage-h up to date) */
 html, html:has(.stage-wrap:not([hidden])), .stage.game-main { scroll-padding-top: calc(var(--stage-h, 0px) + 0.5rem); }
 .game { padding-bottom: 0.5rem; }
@@ -791,7 +791,7 @@ html, html:has(.stage-wrap:not([hidden])), .stage.game-main { scroll-padding-top
 
 /* ---- bottom bar: a light paper strip, the page you are on marked with tape ---- */
 .navbar {
-  position: sticky; bottom: 0; z-index: 6; align-items: stretch; gap: 0; height: var(--nav-h); margin-top: auto; overflow: visible;
+  position: sticky; bottom: 0; z-index: 6; align-items: stretch; gap: 0; height: auto; min-height: var(--nav-min); margin-top: auto; overflow: visible;
   padding: 0 0.25rem env(safe-area-inset-bottom, 0px); border-top: 1.5px solid color-mix(in srgb, var(--md-on-surface) 40%, transparent);
   background-color: var(--md-surface-container-low); background-image: var(--paper-tex); background-size: 256px 256px; box-shadow: 0 -0.15rem 0.5rem var(--paper-shade);
 }
@@ -932,7 +932,7 @@ html, html:has(.stage-wrap:not([hidden])), .stage.game-main { scroll-padding-top
 /* A very narrow screen (200 percent zoom on a phone, about 195 px): the bottom bar wraps into rows of icon-only 44 px buttons (each keeps its
    accessible name), the title gets its own row so it never truncates, and the little notes stay small so they leave the pet visible. */
 @media (max-width: 260px) {
-  :root { --nav-h: calc(92px + env(safe-area-inset-bottom, 0px)); }
+  :root { --nav-min: calc(92px + env(safe-area-inset-bottom, 0px)); }
   .navbar { flex-wrap: wrap; align-content: stretch; justify-content: center; }
   .navbar .nav-item { flex: 0 0 44px; min-width: 44px; min-height: 44px; }
   .navbar .nav-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -941,4 +941,68 @@ html, html:has(.stage-wrap:not([hidden])), .stage.game-main { scroll-padding-top
   .bar-actions { margin-left: auto; }
   .icon-btn { width: 44px; height: 44px; }
   .toast.on-stage { font-size: 0.8125rem; line-height: 1.25; padding: 0.25rem 0.5rem; max-width: calc(100% - 0.5rem); }
+}
+
+
+/* ---- round 6: launch fixes (layout) ---- */
+/* The preview note: one slim strip, calm colours from the paper tokens (light and night), a dismiss button with a 44 px hit area that
+   overhangs the strip instead of making it tall. Only preview packets have it (scripts/preview-label.mjs). */
+.preview-note { display: flex; align-items: center; gap: 0.25rem; margin: 0 var(--gutter) 0.25rem; padding: 0 0 0 0.75rem; min-height: 1.75rem; border-radius: 0.5rem;
+  background: var(--md-secondary-container); color: var(--md-on-secondary-container); border: 1px solid var(--md-outline-variant);
+  font: 600 0.75rem/1.2 var(--font-body); letter-spacing: 0.01em; }
+.preview-note[hidden] { display: none; }
+.preview-note p { margin: 0; flex: 1 1 auto; min-width: 0; padding: 0.2rem 0; }
+.preview-x { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; margin: -11px 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; }
+.preview-x:hover { background: color-mix(in srgb, currentColor 10%, transparent); }
+.preview-about { display: grid; gap: 0.25rem; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--md-outline-variant); }
+.preview-about > p { margin: 0; }
+
+/* The bottom bar is as tall as its content needs (app.js publishes the real height as --nav-h and the top bar's as --bar-h), and the
+   page fills the screen so the bar rests on the bottom edge even on a short page (no strip under it). */
+#game-root { flex: 1 1 auto; display: flex; flex-direction: column; }
+#game-root > .game { flex: 1 1 auto; padding-bottom: 0; } /* the 0.5rem under the bar was the strip below it */
+.navbar .nav-label { line-height: 1.2; padding-bottom: 0.1em; }
+
+/* The pinned picture keeps a slot under it where the note rests, so the note never covers the pet or the page below. */
+.stage-wrap { padding-bottom: calc(0.65rem + min(2.6rem, 42px)); }
+.toast.on-stage { margin-top: 0.8rem; transform: translateX(-50%) rotate(-1.2deg); }
+/* No note over a dialog, and none left from before it opened (app.js empties it). */
+body:has(dialog[open]) .toast { visibility: hidden; }
+
+/* Create: once the page is scrolled the pinned picture shrinks so it stops hiding the cards and the Look buttons (app.js sets data-scrolled). */
+@media (orientation: portrait) {
+  html[data-scrolled] .game:has(> .screen > .creator) .stage-box { max-height: min(21vh, 13rem); width: min(100%, calc(min(21vh, 13rem) * 4 / 3)); }
+}
+
+/* World walk upright: the world takes what is left of the screen, so the progress bar and Pause / Head home are on screen without scrolling. */
+@media (orientation: portrait) {
+  .walk:not([data-setup]) { display: grid; grid-template-rows: auto minmax(9rem, 1fr) auto; row-gap: 0.5rem; min-height: calc(100dvh - var(--top-extra, 0px) - var(--bar-h) - var(--nav-h) - 1.25rem); }
+  .walk:not([data-setup]) > .walk-world { min-height: 0; }
+  .walk:not([data-setup]) .ww { height: 100%; min-height: 9rem; }
+}
+
+/* A phone held sideways: slim top and bottom bars, the pet picture takes the left half, no big page title (the heading stays for screen readers). */
+@media (orientation: landscape) and (max-height: 40rem) {
+  :root { --bar-h: 44px; --nav-min: calc(44px + env(safe-area-inset-bottom, 0px)); --nav-h: var(--nav-min); --stage-extra: 52px; }
+  .preview-note { margin-bottom: 0; font-size: min(0.75rem, 15px); }
+  .bar { height: var(--bar-h); min-height: 0; padding-block: 0; }
+  .bar h1 { font-size: min(1.5rem, 26px); line-height: 1.2; }
+  .bar .icon-btn { width: 44px; height: 44px; }
+  .navbar { padding-block: 0 env(safe-area-inset-bottom, 0px); margin-top: auto; }
+  .navbar .nav-item { flex-direction: row; justify-content: center; align-items: center; gap: 0.4rem; min-height: 44px; padding: 0 0.15rem; }
+  .navbar .nav-item .nav-pill { flex: none; }
+  .navbar .nav-item[aria-current="page"] { padding-top: 0; }
+  .screen h2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; margin: 0; }
+  .screen { padding-top: 0.25rem; padding-bottom: 0.75rem; }
+  .stage-wrap { padding: 8px 0.5rem 8px 0.75rem; }
+  .stage-wrap:has(.stage-tags) { --stage-extra: 104px; }
+  .stage-wrap .stage-box, .stage-wrap:has(.stage-tags) .stage-box {
+    --h: max(112px, calc(100dvh - var(--top-extra, 0px) - var(--bar-h) - var(--nav-h) - var(--stage-extra)));
+    max-height: var(--h); width: min(100%, calc(var(--h) * 4 / 3));
+  }
+  .stage-wrap .stage-tags .btn.tag { min-height: min(2.75rem, 44px); }
+  /* the note rests under the pinned picture at the foot of the left column; never in the right column where the controls are */
+  .toast.on-stage { top: auto !important; bottom: calc(var(--nav-h) + 0.25rem); max-width: calc(45vw - 1.5rem) !important; font-size: min(0.9375rem, 16px); transform: translateX(-50%) rotate(-1.2deg); }
+  .ww { height: calc(100dvh - var(--top-extra, 0px) - var(--bar-h) - var(--nav-h) - 1rem); }
+  .walk-view { max-height: calc(100dvh - var(--top-extra, 0px) - var(--bar-h) - var(--nav-h) - 1rem); }
 }
