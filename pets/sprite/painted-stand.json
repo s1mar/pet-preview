@@ -9,14 +9,14 @@
   0.52
  ],
  "eyeL": [
-  0.47,
-  0.36
+  0.52,
+  0.41
  ],
  "eyeR": [
-  0.63,
-  0.36
+  0.78,
+  0.395
  ],
- "eyeR_px": 0.025,
+ "eyeR_px": 0.035,
  "mouth": [
   0.55,
   0.42
@@ -50,5 +50,7 @@
  "height": 768,
  "mirrored": true,
  "facing": "right",
- "units": "normalized 0..1 of image; headR and eyeR_px are fractions of image width"
+ "units": "normalized 0..1 of image; headR and eyeR_px are fractions of image width",
+ "eyeRadL": 0.058,
+ "eyeRadR": 0.038
 }
