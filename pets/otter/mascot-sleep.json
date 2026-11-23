@@ -47,7 +47,7 @@
  "look": "mascot",
  "pose": "sleep",
  "width": 768,
- "height": 617,
+ "height": 613,
  "mirrored": false,
  "facing": null,
  "units": "normalized 0..1 of image; headR and eyeR_px are fractions of image width"

@@ -1,0 +1,91 @@
+{
+ "headC": [
+  0.7,
+  0.43
+ ],
+ "headR": 0.2,
+ "neck": [
+  0.68,
+  0.62
+ ],
+ "eyeL": [
+  0.72,
+  0.43
+ ],
+ "eyeR": [
+  0.905,
+  0.41
+ ],
+ "eyeR_px": 0.045,
+ "mouth": [
+  0.84,
+  0.51
+ ],
+ "earTips": [
+  [
+   0.56,
+   0.07
+  ],
+  [
+   0.8,
+   0.05
+  ]
+ ],
+ "wings": [
+  {
+   "root": [
+    0.47,
+    0.42
+   ],
+   "tip": [
+    0.06,
+    0.2
+   ]
+  },
+  {
+   "root": [
+    0.47,
+    0.4
+   ],
+   "tip": [
+    0.37,
+    0.12
+   ]
+  },
+  {
+   "root": [
+    0.44,
+    0.53
+   ],
+   "tip": [
+    0.13,
+    0.64
+   ]
+  }
+ ],
+ "tailRoot": [
+  0.3,
+  0.8
+ ],
+ "tailTip": [
+  0.16,
+  0.78
+ ],
+ "feetY": 0.95,
+ "bellyC": [
+  0.65,
+  0.72
+ ],
+ "bodyC": [
+  0.5,
+  0.72
+ ],
+ "species": "moth",
+ "look": "mascot",
+ "pose": "stand",
+ "width": 768,
+ "height": 760,
+ "mirrored": false,
+ "facing": "right",
+ "units": "normalized 0..1 of image; headR and eyeR_px are fractions of image width"
+}

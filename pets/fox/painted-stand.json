@@ -52,7 +52,7 @@
  "look": "painted",
  "pose": "stand",
  "width": 768,
- "height": 732,
+ "height": 737,
  "mirrored": true,
  "facing": "right",
  "units": "normalized 0..1 of image; headR and eyeR_px are fractions of image width"

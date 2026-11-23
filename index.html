@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#fbf8ee" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#14150f" media="(prefers-color-scheme: dark)">
   <meta name="color-scheme" content="dark light">
-  <meta name="petpreview-build" content="32cc27baaa52">
+  <meta name="petpreview-build" content="f2e8e5782e08">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Pet Preview">
@@ -16,20 +16,17 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.64cd2971.css">
+  <link rel="stylesheet" href="styles.f3154eda.css">
   <meta name="robots" content="noindex, nofollow">
 </head>
 <body>
   <a class="skip" href="#main">Skip to the pet</a>
   <div class="frame">
-<div data-preview-label role="note" style="margin:0 0 8px;border-radius:12px;padding:6px 12px;font:600 13px/1.3 system-ui,sans-serif;text-align:center;background:#ffd84d;color:#222">Preview build. Sync is not available in this preview, so your pet is saved in this browser only. <a href="bench/" style="color:#222;text-decoration:underline;white-space:nowrap">Phone bench</a> <a href="THIRD_PARTY_NOTICES.txt" style="color:#222;text-decoration:underline;white-space:nowrap">Open-source notices</a></div>
+<div data-preview-label role="note" style="margin:0 0 8px;border-radius:12px;padding:6px 12px;font:600 0.8125rem/1.3 system-ui,sans-serif;text-align:center;background:#ffd84d;color:#222">Preview build. Sync is not available in this preview, so your pet is saved in this browser only. <a href="bench/" style="color:#222;text-decoration:underline;white-space:nowrap">Phone bench</a> <a href="THIRD_PARTY_NOTICES.txt" style="color:#222;text-decoration:underline;white-space:nowrap">Open-source notices</a></div>
 
     <header class="bar">
       <h1>Pet Preview</h1>
       <div class="bar-actions" id="bar-actions">
-        <button type="button" id="open-settings" class="icon-btn" aria-haspopup="dialog" aria-label="Settings and about" title="Settings and about">
-          <svg class="icon" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.8a8.2 8.2 0 1 0 .01 0z"/><path d="M12 11v5.2 M12 7.6v.3"/></svg>
-        </button>
       </div>
     </header>
 
@@ -45,26 +42,23 @@
 
   <dialog id="settings" aria-labelledby="settings-title">
     <form method="dialog" class="panel">
-      <h2 id="settings-title">Settings and about</h2>
+      <h2 id="settings-title">About this app</h2>
       <dl class="facts">
         <dt>Version</dt><dd id="fact-version">unknown</dd>
         <dt>Running as</dt><dd id="fact-mode">checking</dd>
         <dt>Offline copy</dt><dd id="fact-offline">checking</dd>
-        <dt>Safe storage</dt><dd id="fact-persist">checking</dd>
         <dt>Space used</dt><dd id="fact-usage">checking</dd>
-        <dt>Sync</dt><dd id="fact-sync">Saved on this device</dd>
       </dl>
-      <p class="small" id="persist-help"></p>
+      <p class="small"><a href="THIRD_PARTY_NOTICES.txt">Open-source notices</a> (the code this app is built with)</p>
       <p class="small"><a href="fonts/FONT-LICENSES.txt">Font licences</a> (the title and note fonts are open-source)</p>
       <div class="row">
-        <button type="button" id="btn-persist" class="btn" hidden>Ask the browser to keep my data</button>
         <button type="button" id="btn-install-reset" class="btn ghost" hidden>Show the install guide again</button>
         <button type="submit" class="btn primary">Close</button>
       </div>
     </form>
   </dialog>
 
-  <script type="module" src="app.b6263554.js"></script>
+  <script type="module" src="app.d0304b5b.js"></script>
   <noscript><p class="noscript">Pet Preview needs JavaScript to run.</p></noscript>
 </body>
 </html>

@@ -1,0 +1,53 @@
+{
+ "headC": [
+  0.8,
+  0.77
+ ],
+ "headR": 0.14,
+ "eyeL": [
+  0.77,
+  0.73
+ ],
+ "eyeR": [
+  0.91,
+  0.76
+ ],
+ "eyeR_px": 0.02,
+ "mouth": [
+  0.89,
+  0.82
+ ],
+ "earTips": [],
+ "crestTip": [
+  0.52,
+  0.06
+ ],
+ "tailRoot": [
+  0.12,
+  0.76
+ ],
+ "tailTip": [
+  0.05,
+  0.72
+ ],
+ "bodyC": [
+  0.45,
+  0.58
+ ],
+ "bellyC": [
+  0.45,
+  0.92
+ ],
+ "breathC": [
+  0.45,
+  0.55
+ ],
+ "species": "tortoise",
+ "look": "painted",
+ "pose": "sleep",
+ "width": 768,
+ "height": 620,
+ "mirrored": false,
+ "facing": null,
+ "units": "normalized 0..1 of image; headR and eyeR_px are fractions of image width"
+}

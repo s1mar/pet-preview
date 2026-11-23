@@ -1,12 +1,13 @@
-// Pet Preview service worker. 32cc27baaa52 and the precache list are filled in by scripts/build.mjs.
-const VERSION = "32cc27baaa52";
+// Pet Preview service worker. f2e8e5782e08 and the precache list are filled in by scripts/build.mjs.
+const VERSION = "f2e8e5782e08";
 // Cache names carry the scope path, so two copies on one origin (for example two sub-paths on a
 // shared Pages host) never delete each other's caches.
 const CACHE_PREFIX = "petpreview-" + new URL(self.registration.scope).pathname;
 const CACHE = CACHE_PREFIX + VERSION;
 const PRECACHE = [
   "./",
-  "app.b6263554.js",
+  "THIRD_PARTY_NOTICES.txt",
+  "app.d0304b5b.js",
   "coat-worker.3714a492.js",
   "fonts/FONT-LICENSES.txt",
   "fonts/caveat-latin-600-normal.woff2",
@@ -42,6 +43,14 @@ const PRECACHE = [
   "pets/fox/painted-stand.json",
   "pets/fox/painted-stand.webp",
   "pets/index.json",
+  "pets/moth/mascot-sleep.json",
+  "pets/moth/mascot-sleep.webp",
+  "pets/moth/mascot-stand.json",
+  "pets/moth/mascot-stand.webp",
+  "pets/moth/painted-sleep.json",
+  "pets/moth/painted-sleep.webp",
+  "pets/moth/painted-stand.json",
+  "pets/moth/painted-stand.webp",
   "pets/mushroompup/mascot-sleep.json",
   "pets/mushroompup/mascot-sleep.webp",
   "pets/mushroompup/mascot-stand.json",
@@ -66,7 +75,15 @@ const PRECACHE = [
   "pets/sprite/painted-sleep.webp",
   "pets/sprite/painted-stand.json",
   "pets/sprite/painted-stand.webp",
-  "styles.64cd2971.css"
+  "pets/tortoise/mascot-sleep.json",
+  "pets/tortoise/mascot-sleep.webp",
+  "pets/tortoise/mascot-stand.json",
+  "pets/tortoise/mascot-stand.webp",
+  "pets/tortoise/painted-sleep.json",
+  "pets/tortoise/painted-sleep.webp",
+  "pets/tortoise/painted-stand.json",
+  "pets/tortoise/painted-stand.webp",
+  "styles.f3154eda.css"
 ];
 const HASHED_ASSET = /\.[0-9a-f]{8}\.(?:js|css)$/;
 const API_PATH = /\/api\//;
@@ -74,6 +91,9 @@ const API_PATH = /\/api\//;
 // (the engine files are about 3 MB) and this worker leaves every request under that path to the network, so a
 // navigation to bench/ is never answered with the cached app page.
 const BENCH_PATH = new URL("bench/", self.registration.scope).pathname;
+
+// The app's own page: the scope root and its index.html. Every other document is a separate page, not the app.
+const SHELL_PATHS = [new URL("./", self.registration.scope).pathname, new URL("index.html", self.registration.scope).pathname];
 
 function abs(path) {
   return new URL(path, self.registration.scope).href;
@@ -120,6 +140,28 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (req.mode === "navigate") {
+    // Only the app's own page gets the cached app shell. Any other document on this origin (THIRD_PARTY_NOTICES.txt,
+    // FONT-LICENSES.txt, a page a later version adds) comes from the network and is saved for offline; the saved copy
+    // answers only when the network fails. It is never the app page.
+    if (!SHELL_PATHS.includes(url.pathname)) {
+      event.respondWith(
+        caches.open(CACHE).then(async (cache) => {
+          try {
+            const res = await fetch(req);
+            if (res.ok) cache.put(req, res.clone());
+            return res;
+          } catch {
+            const saved = await cache.match(req, { ignoreSearch: true });
+            if (saved) return saved;
+            return new Response("This page is not saved for offline use. Reconnect and try again.", {
+              status: 503,
+              headers: { "Content-Type": "text/plain; charset=utf-8" },
+            });
+          }
+        }),
+      );
+      return;
+    }
     event.respondWith(
       caches.open(CACHE).then(async (cache) => {
         const hit = (await cache.match(req, { ignoreSearch: true })) || (await cache.match(abs("./")));

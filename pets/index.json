@@ -77,14 +77,24 @@
    "name": "Star moth",
    "blurb": "Dreamy night-owl; glows brighter when it feels safe.",
    "palette": "#4b3f8f",
-   "files": {}
+   "files": {
+    "painted-stand": "moth/painted-stand.webp",
+    "painted-sleep": "moth/painted-sleep.webp",
+    "mascot-stand": "moth/mascot-stand.webp",
+    "mascot-sleep": "moth/mascot-sleep.webp"
+   }
   },
   {
    "id": "tortoise",
    "name": "Pebble tortoise",
    "blurb": "Calm and stubborn; slow to start, impossible to rush.",
    "palette": "#9a8f7a",
-   "files": {}
+   "files": {
+    "painted-stand": "tortoise/painted-stand.webp",
+    "painted-sleep": "tortoise/painted-sleep.webp",
+    "mascot-stand": "tortoise/mascot-stand.webp",
+    "mascot-sleep": "tortoise/mascot-sleep.webp"
+   }
   }
  ]
 }
