@@ -81,7 +81,7 @@
     },
     {
       "bundle": "shell-and-game-app",
-      "inputs": 97,
+      "inputs": 99,
       "thirdPartyInputs": 2,
       "packages": 2
     },
